@@ -191,7 +191,7 @@ export default {
       getRecommendPosting('计算机学院', '软件工程', this.page++).then(res => {
         this.postings = res.data
       }).catch(err => {
-        console.log(err)
+        console.log("请求失败，err↓",err)
       })
     }
     if (this.type === 'latest') {
@@ -199,7 +199,7 @@ export default {
         this.postings = res.data
         console.log(this.postings)
       }).catch(err => {
-        console.log(err)
+        console.log("请求失败，err↓",err)
       })
     }
   },

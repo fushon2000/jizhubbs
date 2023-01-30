@@ -51,6 +51,8 @@ export default {
 <style scoped>
 .header {
   height: 50px;
+  min-width: 1500px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   background-color: #e8e7ee;

@@ -3,7 +3,7 @@ import App from './App.vue'
 //引入路由器
 import router from '@/router'
 import VueBus from "vue-bus";
-import ElementUI from 'element-ui'
+import {Image,Tabs,TabPane,Carousel,CarouselItem,Tree,Message} from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 // 引入fontawesome
 /* import the fontawesome core */
@@ -20,7 +20,14 @@ library.add(fas,far/*,fab*/)
 /* add font awesome icon component */
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
-Vue.use(ElementUI)
+Vue.use(Image)
+Vue.use(Tabs)
+Vue.use(TabPane)
+Vue.use(Carousel)
+Vue.use(CarouselItem)
+Vue.use(Tree)
+Vue.prototype.$message = Message;
+
 Vue.use(VueBus)
 
 Vue.config.productionTip = false

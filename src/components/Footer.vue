@@ -31,6 +31,7 @@ export default {
     color: black;
   }
   .footer {
+    min-width: 1500px;
   }
   .footer-box-header {
     height: 30px;

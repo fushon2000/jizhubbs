@@ -168,7 +168,7 @@ export default {
     getRecommendPosting('计算机学院', '软件工程', this.page++).then(res => {
       this.postings = res.data
     }).catch(err => {
-      console.log(err)
+      console.log("请求失败，err↓",err)
     })
   },
   mounted() {

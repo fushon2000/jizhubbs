@@ -5,8 +5,8 @@
         <!-- 走马灯 -->
         <div class="slide">
           <el-carousel height="280px">
-            <el-carousel-item v-for="item in 4" :key="item">
-              <h3 class="small">{{ item }}</h3>
+            <el-carousel-item v-for="(image,index) in carouselImages" :key="index">
+              <img :src="image" height="100%" width="100%"/>
             </el-carousel-item>
           </el-carousel>
         </div>
@@ -20,7 +20,7 @@
             </el-carousel>
           </div>
           <div class="search-bottom">
-            <div>
+            <div class="search-box">
               <label for="search" v-show="inPlaceholder"><i class="el-icon-search">&nbsp;&nbsp;请输入关键字进行搜索</i></label>
               <input type="text" id="search" @blur="showPlaceholder" @focus="hidePlaceholder" v-model="searchContent">
             </div>
@@ -193,6 +193,14 @@ export default {
   },
   data() {
     return {
+      carouselImages: [
+          "http://jizhubbs.oss-cn-shenzhen.aliyuncs.com/0d8ca439%209929%20414e%2080a5%20be157827da76-7C7F8DE3-BE93-4B55-8D14-1666BC57E1D6.jpeg",
+          "http://jizhubbs.oss-cn-shenzhen.aliyuncs.com/f0c8f2e5%207697%204a4f%20813c%20cf5e6640f37d-959C8FB6-B05B-4CCD-9050-C64A5A08FEE9.jpeg",
+          "http://jizhubbs.oss-cn-shenzhen.aliyuncs.com/9dcb2f18%20d594%20435a%20bb61%20f0c13202da7f-3A00B581-BAA0-4FB9-AABD-B845804DB026.jpeg",
+          "http://jizhubbs.oss-cn-shenzhen.aliyuncs.com/2020-09-26%2020-08-08.jpg",
+          "http://jizhubbs.oss-cn-shenzhen.aliyuncs.com/2020-09-26%2020-08-36.jpg",
+          "http://jizhubbs.oss-cn-shenzhen.aliyuncs.com/2020-09-26%2020-09-42.jpg"
+      ],
       searchContent: "",
       inPlaceholder: true,
       activeName: 'recommend',
@@ -262,6 +270,7 @@ export default {
     //切换tabs
     handleClick(tab, event) {
       this.$router.push({name: `${tab.name}`})
+      console.log("进入handleClick")
       // this.currentTab = tab.name
     },
     handleNodeClick(data) {
@@ -555,10 +564,12 @@ li {
 .home {
   background: transparent url("./img/吉珠背景图 星空.jpg") no-repeat fixed top center;
   background-size: 100% 100%;
+  min-width: 1500px;
 }
 
 .home-box {
   overflow: hidden;
+  width: 100%;
 }
 
 .home-box-header {
@@ -581,7 +592,7 @@ li {
   border-radius: 14px;
   overflow: hidden;
   height: 100%;
-  width: 380px;
+  min-width: 380px;
 }
 
 .search-header {
@@ -597,10 +608,11 @@ li {
   overflow: hidden;
 }
 
-.search-bottom div {
+.search-bottom .search-box {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .search-bottom label {
