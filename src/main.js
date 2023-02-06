@@ -3,7 +3,8 @@ import App from './App.vue'
 //引入路由器
 import router from '@/router'
 import VueBus from "vue-bus";
-import {Image,Tabs,TabPane,Carousel,CarouselItem,Tree,Message} from 'element-ui'
+import store from "@/store";
+import {Image,Tabs,TabPane,Carousel,CarouselItem,Tree,Message,MessageBox,Upload,Dialog,Button,Input,Form,FormItem} from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 // 引入fontawesome
 /* import the fontawesome core */
@@ -26,7 +27,16 @@ Vue.use(TabPane)
 Vue.use(Carousel)
 Vue.use(CarouselItem)
 Vue.use(Tree)
+Vue.use(Upload)
+Vue.use(Dialog)
+Vue.use(Button)
+Vue.use(Input)
+Vue.use(Form)
+Vue.use(FormItem)
 Vue.prototype.$message = Message;
+Vue.prototype.$confirm = MessageBox.confirm;
+Vue.prototype.$alert = MessageBox.alert;
+Vue.prototype.$prompt = MessageBox.prompt;
 
 Vue.use(VueBus)
 
@@ -35,4 +45,5 @@ Vue.config.productionTip = false
 new Vue({
     render: h => h(App),
     router,
+    store
 }).$mount('#app')

@@ -7,19 +7,19 @@
         <!-- 作者、创建时间 -->
         <div class="author-time" v-if="type === 'latest'">
           <div class="author">
-              <div class="icon">
-                <font-awesome-icon icon="fa-solid fa-user-large" />
-              </div>
-              <div>
-                {{posting.author}}
-              </div>
+            <div class="icon">
+              <font-awesome-icon icon="fa-solid fa-user-large"/>
+            </div>
+            <div>
+              {{ posting.author }}
+            </div>
           </div>
           <div class="time">
             <div class="icon">
-              <font-awesome-icon icon="fa-solid fa-clock" />
+              <font-awesome-icon icon="fa-solid fa-clock"/>
             </div>
             <div>
-              {{posting.other.timeToCreate}}
+              {{ posting.other.timeToCreate }}
             </div>
           </div>
         </div>
@@ -105,6 +105,10 @@ export default {
       lastPage: false
     }
   },
+  props: {
+    department: {default: '计算机学院'},
+    speciality: {default: '软件工程'}
+  },
   methods: {
     // 点赞效果
     thumbUp(index, star) {
@@ -187,19 +191,21 @@ export default {
   },
   created() {
     this.type = this.$route.name
+    this.isLoad = true
     if (this.type === 'recommend') {
-      getRecommendPosting('计算机学院', '软件工程', this.page++).then(res => {
+      getRecommendPosting(this.department, this.speciality, this.page++).then(res => {
         this.postings = res.data
+        this.isLoad = false
       }).catch(err => {
-        console.log("请求失败，err↓",err)
+        console.log("请求失败，err↓", err)
       })
     }
     if (this.type === 'latest') {
-      getLatestPosting('计算机学院', '软件工程', this.page++).then(res => {
+      getLatestPosting(this.department, this.speciality, this.page++).then(res => {
         this.postings = res.data
-        console.log(this.postings)
+        this.isLoad = false
       }).catch(err => {
-        console.log("请求失败，err↓",err)
+        console.log("请求失败，err↓", err)
       })
     }
   },
@@ -211,56 +217,58 @@ export default {
     // jQuery 实现触底加载更多
     // 添加滚动事件
     // 滚动一次请求页数+1 每页4条数据
-    $(window).scroll(() => {
-      let docHeight = $(document).height(); // 整个文档高度
-      let winHeight = $(window).height(); // 浏览器可视窗口高度
-      let scrollTop = $(window).scrollTop(); // 浏览器可视窗口顶端距离网页顶端的高度
-      // 滚动条+可视高度+50，距离文档高度差50的时候就要加载数据了
-      if ((scrollTop + winHeight + 80 > docHeight) && this.isLoad === false && this.lastPage === false) {
-        this.isLoad = true
-        // 发送ajax请求数据  请求4条数据  填充到尾部
-        if (this.type === 'recommend') {
-          getRecommendPosting('计算机学院', '软件工程', this.page++).then(res => {
-            if (res.data.length > 0) {
-              this.postings.push(...res.data)
-            } else {
-              this.lastPage = true
-              this.$message({
-                message: this.loadingNullMessage,
-                // offset: 60,
-                offset: 520,
-                center: true,
-                iconClass: 'lastPageMessageIcon',
-                customClass: 'lastPageMessage'
-              });
-            }
-            this.isLoad = false
-          }).catch(err => {
-            console.log(err)
-          })
+    this.$nextTick(() => {
+      $(document).scroll(() => {
+        let docHeight = $(document).height(); // 整个文档高度
+        let winHeight = $(window).height(); // 浏览器可视窗口高度
+        let scrollTop = $(window).scrollTop(); // 浏览器可视窗口顶端距离网页顶端的高度
+        // 滚动条+可视高度+150，距离文档高度差150的时候就要加载数据了
+        if ((scrollTop + winHeight + 150 > docHeight) && this.isLoad === false && this.lastPage === false) {
+          this.isLoad = true
+          console.log(this.type)
+          // 发送ajax请求数据  请求4条数据  填充到尾部
+          if (this.type === 'recommend') {
+            getRecommendPosting(this.department, this.speciality, this.page++).then(res => {
+              if (res.data.length > 0) {
+                this.postings.push(...res.data)
+              } else {
+                this.lastPage = true
+                this.$message({
+                  message: this.loadingNullMessage,
+                  // offset: 60,
+                  offset: 520,
+                  center: true,
+                  iconClass: 'lastPageMessageIcon',
+                  customClass: 'lastPageMessage'
+                });
+              }
+              this.isLoad = false
+            }).catch(err => {
+              console.log(err)
+            })
+          } else if (this.type === 'latest') {
+            getLatestPosting(this.department, this.speciality, this.page++).then(res => {
+              if (res.data.length > 0) {
+                this.postings.push(...res.data)
+              } else {
+                this.lastPage = true
+                this.$message({
+                  message: this.loadingNullMessage,
+                  // offset: 60,
+                  offset: 520,
+                  center: true,
+                  iconClass: 'lastPageMessageIcon',
+                  customClass: 'lastPageMessage'
+                });
+              }
+              this.isLoad = false
+            }).catch(err => {
+              console.log(err)
+            })
+          }
         }
-        if (this.type === 'latest') {
-          getLatestPosting('计算机学院', '软件工程', this.page++).then(res => {
-            if (res.data.length > 0) {
-              this.postings.push(...res.data)
-            } else {
-              this.lastPage = true
-              this.$message({
-                message: this.loadingNullMessage,
-                // offset: 60,
-                offset: 520,
-                center: true,
-                iconClass: 'lastPageMessageIcon',
-                customClass: 'lastPageMessage'
-              });
-            }
-            this.isLoad = false
-          }).catch(err => {
-            console.log(err)
-          })
-        }
-      }
-    });
+      });
+    })
   },
   beforeDestroy() {
     clearTimeout(window.thumbsUp)
@@ -268,7 +276,9 @@ export default {
     clearTimeout(window.showDot)
     this.$message = null
     this.tmpStar = {}
-  }
+    $(document).unbind('scroll');
+  },
+
 
 }
 </script>
@@ -292,6 +302,7 @@ li {
 .bulletin-title {
   cursor: pointer;
 }
+
 .author-time {
   height: 20px;
   width: 100%;
@@ -299,19 +310,24 @@ li {
   margin: 4px 0;
   font-size: xx-small;
 }
+
 .author-time div {
   display: inline-block;
-  color: rgba(255,255,255,.6);
+  color: rgba(255, 255, 255, .6);
 }
+
 .author-time .time {
   margin-left: 20px;
 }
+
 .svg-inline--fa {
   vertical-align: unset;
 }
+
 .author-time .icon {
   margin-right: 4px;
 }
+
 .bulletin-content {
   overflow: hidden;
   text-overflow: ellipsis;

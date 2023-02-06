@@ -42,7 +42,20 @@ export default new VueRouter({
             path:"/test",
             component:()=>import("@/pages/Test"),
             hidden: true
-        }
+        },
+        {
+            name:"writeArticle",
+            path:"/writeArticle/:uid",
+            component:()=>import("@/pages/WriteArticle"),
+        },
 
-    ]
+    ],
+    // 跳转路由回到顶部，savedPosition 当且仅当 popstate 导航 (通过浏览器的 前进/后退 按钮触发) 时才可用。
+    scrollBehavior (to, from, savedPosition) {
+        if (savedPosition) {
+            return savedPosition
+        } else {
+            return { x: 0, y: 0 }
+        }
+    }
 })

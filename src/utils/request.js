@@ -4,14 +4,13 @@ import { MessageBox, Message } from 'element-ui'
 // create an axios instance
 const service = axios.create({
   baseURL: '/api',
-  timeout: 15000 // request timeout 异步请求15秒没数据返回报超时错误
+  timeout: 60000 // request timeout 异步请求60秒没数据返回报超时错误
 })
 
 // request interceptor
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-
     return config
   },
   error => {

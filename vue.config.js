@@ -12,15 +12,15 @@ module.exports = defineConfig({
         host: "localhost",
         port: 80,
         open: true,
-        // proxy: {
-        //     '/api': {
-        //         target: 'http://120.78.134.9/api', //请求后台gateway网关，由gateway分发接口
-        //         changeOrigin: true, // 允许跨域
-        //         pathRewrite: {
-        //             '^/api': '' // 重写请求
-        //         }
-        //     }
-        // }
+        proxy: {
+            '/api': {
+                target: 'http://localhost:90', //请求后台gateway网关，由gateway分发接口
+                changeOrigin: true, // 允许跨域
+                pathRewrite: {
+                    '^/api': '' // 重写请求
+                }
+            }
+        }
     },
     publicPath:'/',
     // 以下均为打包插件，首页加载过慢才加的，可能是elementui过大
