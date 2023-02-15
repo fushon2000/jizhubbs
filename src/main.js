@@ -4,7 +4,8 @@ import App from './App.vue'
 import router from '@/router'
 import VueBus from "vue-bus";
 import store from "@/store";
-import {Image,Tabs,TabPane,Carousel,CarouselItem,Tree,Message,MessageBox,Upload,Dialog,Button,Input,Form,FormItem} from 'element-ui'
+import {Image,Tabs,TabPane,Carousel,CarouselItem,Tree,Message,MessageBox,
+    Upload,Dialog,Button,Input,Form,FormItem,Avatar,Popover,Table,TableColumn} from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 // 引入fontawesome
 /* import the fontawesome core */
@@ -33,6 +34,10 @@ Vue.use(Button)
 Vue.use(Input)
 Vue.use(Form)
 Vue.use(FormItem)
+Vue.use(Avatar)
+Vue.use(Popover)
+Vue.use(Table)
+Vue.use(TableColumn)
 Vue.prototype.$message = Message;
 Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$alert = MessageBox.alert;

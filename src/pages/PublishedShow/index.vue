@@ -84,7 +84,7 @@ import $ from 'jquery'
 import {getRecommendPosting, getLatestPosting} from "@/api/posting";
 
 export default {
-  name: "",
+  name: "Posting",
   data() {
     return {
       // 当前路由的名字

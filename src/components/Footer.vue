@@ -12,8 +12,8 @@
       </div>
       <div class="footer-box-container">
         <p>站点声明:本站转歌作品版权归原作者及来源网站所有，原创内容作品版权归作者所有，任何内容转载、商业用途等均须联系原作者并注明来源。</p>
-        <p>Copyright图 2022 jizhubbs   粤123456号</p>
-        <p>相关权举报投诉及建议等，请发E-mail: 123456@qq.com</p>
+        <p>Copyright图 2022 jizhubbs <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备2023007139号-1</a></p>
+        <p>相关权举报投诉及建议等，请发E-mail: 695264288@qq.com</p>
       </div>
     </div>
   </div>

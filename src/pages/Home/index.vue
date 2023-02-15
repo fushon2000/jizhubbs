@@ -194,10 +194,9 @@ export default {
         speciality: '3241',
       },
       // 热点帖子
-      hotDots: [
-        //{department:'计算机学院',postings:[{title:'计算机学院一号帖子',author:'佐助',time:'五天前',view:'201310'},{title:'计算机学院二号帖子',author:'佐助',time:'五天前',view:'201310'},{title:'计算机学院三号帖子',author:'佐助',time:'五天前',view:'201310'},]},
-        //{department:'商学院',postings:[{title:'商学院一号帖子',author:'佐助',time:'五天前',view:'201310'},{title:'商学院二号帖子',author:'佐助',time:'五天前',view:'201310'},{title:'商学院三号帖子',author:'佐助',time:'五天前',view:'201310'},]},
-      ]
+      hotDots: [],
+      // 热帖当前下标
+      hotDotIndex:0,
     }
   },
   methods: {
@@ -212,11 +211,16 @@ export default {
       this.$refs.departmentHot.setActiveItem(now)
       $(".department-hot .el-carousel__container")
           .css("height", this.$refs.departmentUl[now].offsetHeight)
+      this.hotDotIndex = now
     },
     //切换tabs
     handleClick(tab, event) {
       this.$router.push({name: `${tab.name}`})
       // this.currentTab = tab.name
+      this.$refs.selectDepartment.setActiveItem(this.hotDotIndex)
+      this.$nextTick(function (){
+        $(".department-hot .el-carousel__container").css("height", this.$refs.departmentUl[this.hotDotIndex].offsetHeight)
+      })
     },
     handleNodeClick(data) {
       console.log(data);
@@ -286,7 +290,6 @@ export default {
   created() {
     getDepartmentsHotDots().then(res => {
       this.hotDots = res.data
-      console.log(this.hotDots)
       this.$nextTick(function () {
         $(".department-hot .el-carousel__container")
             .css("height", this.$refs.departmentUl[0].offsetHeight)
@@ -300,6 +303,7 @@ export default {
       "padding": "5px 0"
     })
     this.$router.push({name: "recommend"})
+
   },
 }
 

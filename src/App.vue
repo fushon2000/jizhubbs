@@ -17,7 +17,7 @@ export default {
     Footer
   },
   mounted() {
-    this.$router.push("/home")
+    // this.$router.push("/home")
   }
 }
 </script>
@@ -31,5 +31,10 @@ export default {
 body {
   height: 100%;
 }
-
+.el-popover {
+  min-width: 50px!important;
+}
+.el-popover {
+  padding: 0!important;
+}
 </style>
