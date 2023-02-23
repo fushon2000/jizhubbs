@@ -21,7 +21,7 @@
           </div>
           <div class="search-bottom">
             <div class="search-box">
-              <label for="search" v-show="inPlaceholder"><i class="el-icon-search">&nbsp;&nbsp;请输入关键字进行搜索</i></label>
+              <label style="cursor: text" for="search" v-show="inPlaceholder"><i class="el-icon-search">&nbsp;&nbsp;请输入关键字进行搜索</i></label>
               <input type="text" id="search" @blur="showPlaceholder" @focus="hidePlaceholder" v-model="searchContent">
             </div>
             <ul>
@@ -86,11 +86,11 @@
             <el-tabs v-model="activeName" @tab-click="handleClick">
               <el-tab-pane label="推荐" name="recommend">
                 <router-view key="recommend" name="recommend"></router-view>
-                <!--                <Recommend v-if="currentTab==='recommend'"></Recommend>-->
+                <!-- <Recommend v-if="currentTab==='recommend'"></Recommend> -->
               </el-tab-pane>
               <el-tab-pane label="最近发布" name="latest">
                 <router-view key="latest" name="latest"></router-view>
-                <!--                <Latest v-if="currentTab==='latest'"></Latest>-->
+                <!-- <Latest v-if="currentTab==='latest'"></Latest> -->
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -282,8 +282,8 @@ export default {
     },
     writeArticle() {
       this.$router.push({
-        name: "writeArticle",
-        params: this.user,
+        name: "publishPosting",
+        params: this.$store.state.user.userInfo,
       })
     }
   },

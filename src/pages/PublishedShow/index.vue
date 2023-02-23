@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <ul class="bulletin-items">
-      <li class="bulletin-item" v-for="(posting, index) in postings" :key="index">
+      <li class="bulletin-item" v-for="(posting, index) in postings" :key="index" >
         <!-- 标题 -->
         <h3 class="bulletin-title">{{ posting.title }}</h3>
         <!-- 作者、创建时间 -->
@@ -38,8 +38,8 @@
           </ul>
         </div>
         <!-- 内容 -->
-        <div class="bulletin-content">
-          <p>{{ posting.content }}</p>
+        <div class="bulletin-content" @click="viewPostingDetail(posting)">
+          <p>{{ posting.content | setText}}</p>
         </div>
         <!-- 点赞、收藏、评论 -->
         <div class="overflow-hide">
@@ -47,16 +47,18 @@
             <ul>
               <li :id="`up${index}`" @click="thumbUp(index,posting.star)">
                 <div class="thumbs-up-box">
-                  <font-awesome-icon icon="fa-solid fa-thumbs-up"/>
+                  <div class="thumbs-box">
+                    <font-awesome-icon icon="fa-solid fa-thumbs-up" class="infinity-thumbs"/>
+                  </div>
                   <div class="dot-box" style="display: none">
-                    <div class='dot dot1'></div>
-                    <div class='dot dot2'></div>
-                    <div class='dot dot3'></div>
-                    <div class='dot dot4'></div>
-                    <div class='dot dot5'></div>
-                    <div class='dot dot6'></div>
-                    <div class='dot dot7'></div>
-                    <div class='dot dot8'></div>
+                    <div class='thumb-dot dot1'></div>
+                    <div class='thumb-dot dot2'></div>
+                    <div class='thumb-dot dot3'></div>
+                    <div class='thumb-dot dot4'></div>
+                    <div class='thumb-dot dot5'></div>
+                    <div class='thumb-dot dot6'></div>
+                    <div class='thumb-dot dot7'></div>
+                    <div class='thumb-dot dot8'></div>
                   </div>
                 </div>
                 <div class="thumbs-up-number">
@@ -85,6 +87,17 @@ import {getRecommendPosting, getLatestPosting} from "@/api/posting";
 
 export default {
   name: "Posting",
+  filters: {
+    // 去除标签
+    setText(html) {
+      let txt = document.createElement("div");
+      txt.innerHTML = html;
+      let content = txt.innerText || txt.textContent;
+      txt = null;
+      console.log(content)
+      return content;
+    }
+  },
   data() {
     return {
       // 当前路由的名字
@@ -102,14 +115,32 @@ export default {
       // 触底加载完所有数据后显示的内容
       loadingNullMessage: '已经到底了哦~',
       // 触底加载是否为最后一页
-      lastPage: false
+      lastPage: false,
+      // 显示哪个院系的帖子
+      // department: '计算机学院',
+      // speciality: '软件工程',
     }
   },
-  props: {
-    department: {default: '计算机学院'},
-    speciality: {default: '软件工程'}
-  },
   methods: {
+    // 加载帖子数据
+    loadPostings() {
+      if (this.type === 'recommend') {
+        getRecommendPosting(this.$store.state.user.userInfo.department, this.$store.state.user.userInfo.speciality, this.page++).then(res => {
+          this.postings = res.data
+          this.isLoad = false
+        }).catch(err => {
+          console.log("getRecommendPosting, 出错", err)
+        })
+      }
+      if (this.type === 'latest') {
+        getLatestPosting(this.$store.state.user.userInfo.department, this.$store.state.user.userInfo.speciality, this.page++).then(res => {
+          this.postings = res.data
+          this.isLoad = false
+        }).catch(err => {
+          console.log("getLatestPosting, 出错", err)
+        })
+      }
+    },
     // 点赞效果
     thumbUp(index, star) {
       this.$set(this.tmpStar, `star${index}`, star)
@@ -161,6 +192,7 @@ export default {
       // console.log(this.postings[index].star)
 
     },
+    // 点踩效果
     thumbDown(index, star) {
       // 1.禁用点击事件
       $(`#up${index}`).addClass("disableClick")
@@ -188,25 +220,25 @@ export default {
       }, 1500)
       // console.log(this.postings[index].star)
     },
+    // 浏览帖子详情
+    viewPostingDetail(posting) {
+      this.$router.push({name:"postingDetail",query: {posting}})
+    }
+  },
+  watch: {
+    '$store.state.user.userInfo': {
+      handler(newVal, oldVal) {
+       this.loadPostings()
+      }
+    }
   },
   created() {
     this.type = this.$route.name
     this.isLoad = true
-    if (this.type === 'recommend') {
-      getRecommendPosting(this.department, this.speciality, this.page++).then(res => {
-        this.postings = res.data
-        this.isLoad = false
-      }).catch(err => {
-        console.log("请求失败，err↓", err)
-      })
-    }
-    if (this.type === 'latest') {
-      getLatestPosting(this.department, this.speciality, this.page++).then(res => {
-        this.postings = res.data
-        this.isLoad = false
-      }).catch(err => {
-        console.log("请求失败，err↓", err)
-      })
+    // 初次加载数据
+    // 如果进入此组件时，store已经收到后端回传的userInfo数据，则在这里获取postings，否则通过监听获取（后端回传速度慢）
+    if (this.$store.state.user.userInfo) {
+      this.loadPostings()
     }
   },
   mounted() {
@@ -228,7 +260,7 @@ export default {
           console.log(this.type)
           // 发送ajax请求数据  请求4条数据  填充到尾部
           if (this.type === 'recommend') {
-            getRecommendPosting(this.department, this.speciality, this.page++).then(res => {
+            getRecommendPosting(this.$store.state.user.userInfo.department, this.$store.state.user.userInfo.speciality, this.page++).then(res => {
               if (res.data.length > 0) {
                 this.postings.push(...res.data)
               } else {
@@ -247,7 +279,7 @@ export default {
               console.log(err)
             })
           } else if (this.type === 'latest') {
-            getLatestPosting(this.department, this.speciality, this.page++).then(res => {
+            getLatestPosting(this.$store.state.user.userInfo.department, this.$store.state.user.userInfo.speciality, this.page++).then(res => {
               if (res.data.length > 0) {
                 this.postings.push(...res.data)
               } else {
@@ -320,7 +352,7 @@ li {
   margin-left: 20px;
 }
 
-.svg-inline--fa {
+.author-time .svg-inline--fa {
   vertical-align: unset;
 }
 
@@ -362,6 +394,7 @@ li {
   margin-top: 8px;
 }
 
+/* 点赞、收藏、评论 */
 .overflow-hide {
   overflow: hidden;
 }
@@ -409,7 +442,6 @@ li {
   padding-right: 10px;
   display: inline-block;
 }
-
 
 .disableClick {
   pointer-events: none;
@@ -508,7 +540,7 @@ li {
 
 /* 点赞特效 */
 /* 八个圆点 */
-.dot {
+.thumb-dot {
   position: absolute;
   top: 8px;
   left: 8px;

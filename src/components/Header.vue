@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="header-icon-box" @click="toTop">
-      <img src="../assets/吉珠校徽.jpg" alt="吉珠校徽"/>
+      <img src="@/assets/img/珠科校徽.png" alt="珠科校徽"/>
       <span>JZBBS</span>
     </div>
     <div class="header-items">
@@ -9,7 +9,7 @@
         <li>首页</li>
         <li>模块</li>
         <li>关于</li>
-        <li>
+        <li v-if="userInfo">
           <div class="personal-center">
             <div class="avatar">
 <!--              <el-avatar :src="userInfo.avatar" :size="30"></el-avatar>-->
@@ -107,9 +107,12 @@ export default {
 }
 
 .header .header-icon-box img {
-  width: 50px;
+  width: 42px;
+  height: 42px;
 }
-
+.header-icon-box span {
+  margin-left: 8px;
+}
 .header-items {
   margin-left: auto;
   margin-right: 20px;

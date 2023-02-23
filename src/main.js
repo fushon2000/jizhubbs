@@ -4,8 +4,11 @@ import App from './App.vue'
 import router from '@/router'
 import VueBus from "vue-bus";
 import store from "@/store";
-import {Image,Tabs,TabPane,Carousel,CarouselItem,Tree,Message,MessageBox,
-    Upload,Dialog,Button,Input,Form,FormItem,Avatar,Popover,Table,TableColumn} from 'element-ui'
+import {
+    Image, Tabs, TabPane, Carousel, CarouselItem, Tree, Message, MessageBox,
+    Upload, Dialog, Button, Input, Form, FormItem, Avatar, Popover, Table, TableColumn,
+    Switch, Select, Tooltip, RadioButton, RadioGroup
+} from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 // 引入fontawesome
 /* import the fontawesome core */
@@ -38,12 +41,32 @@ Vue.use(Avatar)
 Vue.use(Popover)
 Vue.use(Table)
 Vue.use(TableColumn)
+Vue.use(Switch)
+Vue.use(Select)
+Vue.use(Tooltip)
+Vue.use(RadioGroup)
+Vue.use(RadioButton)
 Vue.prototype.$message = Message;
 Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$alert = MessageBox.alert;
 Vue.prototype.$prompt = MessageBox.prompt;
 
 Vue.use(VueBus)
+// froala富文本编辑器
+//Import Froala Editor
+import 'froala-editor/js/plugins.pkgd.min.js';
+//Import third party plugins
+import 'froala-editor/js/third_party/embedly.min';
+import 'froala-editor/js/third_party/font_awesome.min';
+import 'froala-editor/js/third_party/spell_checker.min';
+import 'froala-editor/js/third_party/image_tui.min';
+// Import Froala Editor css files.
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/js/languages/zh_cn';
+
+import VueFroala from 'vue-froala-wysiwyg';
+Vue.use(VueFroala)
 
 Vue.config.productionTip = false
 

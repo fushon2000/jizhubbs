@@ -319,7 +319,9 @@ li {
 }
 
 .thumbs-up-box {
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
   width: 40px;
   text-align: center;

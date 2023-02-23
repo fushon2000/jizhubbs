@@ -44,7 +44,8 @@ const router = new VueRouter({
                     },
                     meta: {
                         title: "吉猪 - 电子布告栏"
-                    }
+                    },
+
                 },
                 {
                     name: "latest",
@@ -75,7 +76,26 @@ const router = new VueRouter({
                 title: "发帖板"
             }
         },
+        {
+            name: "publishPosting",
+            path: "/publishPosting/:uid",
+            component: () => import("@/pages/PublishPosting"),
+            meta: {
+                title: "写文章"
+            },
+            props: {
 
+            }
+        },
+        {
+            name: "postingDetail",
+            path: "/postingDetail",
+            component: () => import("@/pages/PostingDetail"),
+            meta: {
+                title: '详情'
+            },
+
+        },
     ],
     // 跳转路由回到顶部，savedPosition 当且仅当 popstate 导航 (通过浏览器的 前进/后退 按钮触发) 时才可用。
     scrollBehavior(to, from, savedPosition) {
@@ -94,14 +114,18 @@ router.beforeEach((to, from, next) => {
             document.title = "吉猪 - 电子布告栏"
             next("/home")
         }
-        // 若store中不存在用户信息，则请求后端
-        if (!store.state.user.userInfo) {
-            store.dispatch("user/getUserInfo", getToken()).then(res => {})
+        // 每次跳转路由都查询store是否存在userInfo，不存在就去调用getUserInfo然后存到store中，防止页面刷新store数据丢失
+        else if (!store.state.user.userInfo) {
+            store.dispatch("user/getUserInfo", getToken()).then(res => {
+                next()
+            })
         }
-        if (to.meta.title) {
-            document.title = to.meta.title
+        else {
+            if (to.meta.title) {
+                document.title = to.meta.title
+            }
+            next()
         }
-        next()
     }
     // 未登录
     else {

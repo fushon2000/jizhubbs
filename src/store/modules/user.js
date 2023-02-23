@@ -1,5 +1,5 @@
 import {signInByUid,signInByPhone, getUserInfo} from "@/api/user";
-import {removeToken, setToken} from "@/utils/auth";
+import {getToken, removeToken, setToken} from "@/utils/auth";
 import {Message} from "element-ui";
 import router from "@/router";
 
@@ -51,8 +51,8 @@ const actions = {
   getUserInfo({commit}, token) {
     getUserInfo(token).then(res=>{
       const {data} = res
-      console.log("getInfo",data)
       commit('SET_USER',data)
+      commit('SET_TOKEN',getToken())
     })
   }
 }

@@ -67,8 +67,8 @@ export default {
   methods: {
     // uid + 密码登录
     signInByUid(uid, password) {
-      this.$store.dispatch("user/signInByUid", {uid, password}).then(() => {
-        this.$router.push({name: "home"})
+      this.$store.dispatch("user/signInByUid", {uid, password}).then((userInfo) => {
+        this.$router.push({name: "home",query: {department:userInfo.department,speciality:userInfo.speciality}})
       }).catch(err => {
         console.log(err)
       })

@@ -55,7 +55,7 @@ export default {
   .footer-box-header h4 {
     padding-left: 26px;
     display: inline-block;
-    background: transparent url("/src/assets/吉珠校徽.jpg") no-repeat left center;
+    background: transparent url("/src/assets/img/吉珠校徽.jpg") no-repeat left center;
     background-size: 26px 20px;
     color: gray;
     float: right;
