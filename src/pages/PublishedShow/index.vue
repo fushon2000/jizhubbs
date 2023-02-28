@@ -39,13 +39,13 @@
         </div>
         <!-- 内容 -->
         <div class="bulletin-content" @click="viewPostingDetail(posting)">
-          <p>{{ posting.content | setText}}</p>
+          <p>{{ posting.content | textFilter}}</p>
         </div>
         <!-- 点赞、收藏、评论 -->
         <div class="overflow-hide">
           <div class="operation">
             <ul>
-              <li :id="`up${index}`" @click="thumbUp(index,posting.star)">
+              <li :id="`up${index}`" @click="thumbUp(posting,index)">
                 <div class="thumbs-up-box">
                   <div class="thumbs-box">
                     <font-awesome-icon icon="fa-solid fa-thumbs-up" class="infinity-thumbs"/>
@@ -65,7 +65,7 @@
                   点赞<span>{{ posting.star }}</span>
                 </div>
               </li>
-              <li :id="`down${index}`" @click="thumbDown(index,posting.star)"><i class="el-icon-caret-bottom"/></li>
+              <li :id="`down${index}`" @click="thumbDown(posting,index)"><i class="el-icon-caret-bottom"/></li>
               <li><i class="el-icon-chat-line-round" style="padding-right: 5px;"></i>{{ posting.comment }}评论</li>
               <li><i class="el-icon-star-on" style="padding-right: 5px;"></i>{{ posting.save }}收藏</li>
             </ul>
@@ -84,17 +84,18 @@
 <script>
 import $ from 'jquery'
 import {getRecommendPosting, getLatestPosting} from "@/api/posting";
+import {increaseStar, decreaseStar} from "@/api/posting";
 
 export default {
   name: "Posting",
   filters: {
     // 去除标签
-    setText(html) {
+    textFilter(html) {
       let txt = document.createElement("div");
       txt.innerHTML = html;
       let content = txt.innerText || txt.textContent;
       txt = null;
-      console.log(content)
+      // console.log(content)
       return content;
     }
   },
@@ -142,76 +143,120 @@ export default {
       }
     },
     // 点赞效果
-    thumbUp(index, star) {
-      this.$set(this.tmpStar, `star${index}`, star)
+    thumbUp({pid,star},index) {
+      if (!this.tmpStar.hasOwnProperty(`star${index}`)) {
+        this.$set(this.tmpStar, `star${index}`, star)
+      }
       // li设置disabled属性无效，需要按钮或者标签才能生效，可以通过pointer-events: none来禁用鼠标事件
       $(`#up${index}`).addClass("disableClick")
       $(`#down${index}`).addClass("disableClick")
       // 先判断是否为踩状态
+      // 踩状态
       if ($(`#down${index}`).is(":hidden")) {
-        $(`#up${index} .thumbs-up-number`).show()
-        $(`#up${index}`).css("backgroundColor", "blue")
-        $(`#down${index}`).css("backgroundColor", "#176bff")
-        $(`#down${index}`).show()
-        $(`#up${index} .thumbs-up-box`).removeClass("thumbRotate180")
-        this.postings[index].star += 1
-      }
-
-      if ($(`#up${index} .dot-box`).css("display") === "none") {
-        // 1.显示大拇指上飞
-        $(`#up${index} .thumbs-up-box`).addClass("dotFlyUp")
-        // 2.点赞数+1
-        this.postings[index].star += 1
-        // 3.背景变蓝色
-        $(`#up${index}`).css("backgroundColor", "blue")
-        window.thumbsUp = setTimeout(() => {
-          // 4.大拇指下滑
-          $(`#up${index} .thumbs-up-box`).addClass("dotFlyDown")
-        }, 1500)
-        window.showDot = setTimeout(() => {
-          // 5.显示八个圆点特效
-          $(`#up${index} .dot-box`).css("display", "block")
-          // 6.恢复点击事件
+        increaseStar(pid, this.$store.state.user.userInfo.uid, 1, "downToNormal").then(res=>{
+          $(`#up${index} .thumbs-up-number`).show()
+          $(`#up${index}`).css("backgroundColor", "blue")
+          $(`#down${index}`).css("backgroundColor", "#176bff")
+          $(`#down${index}`).show()
+          $(`#up${index} .thumbs-up-box`).removeClass("thumbRotate180")
+          $(`#up${index}`).css("backgroundColor", "#176bff")
+          // 恢复点击事件
           $(`#up${index}`).removeClass("disableClick")
           $(`#down${index}`).removeClass("disableClick")
-        }, 2000)
-      } else {
-        // 1.去除八个圆点盒子
-        $(`#up${index} .dot-box`).css("display", "none")
-        // 2.去除上下飞特效
-        $(`#up${index} .thumbs-up-box`).removeClass("dotFlyUp")
-        $(`#up${index} .thumbs-up-box`).removeClass("dotFlyDown")
-        // 3.点赞数-1
-        this.postings[index].star -= 1
-        // 4.背景恢复
-        $(`#up${index}`).css("backgroundColor", "#176bff")
-        // 5.恢复点击事件
-        $(`#up${index}`).removeClass("disableClick")
-        $(`#down${index}`).removeClass("disableClick")
+          this.postings[index].star += 1
+        }).catch(err=>{
+          // 恢复点击事件
+          $(`#up${index}`).removeClass("disableClick")
+          $(`#down${index}`).removeClass("disableClick")
+        })
       }
-      // console.log(this.postings[index].star)
-
+      // 正常状态
+      else if ($(`#up${index} .dot-box`).css("display") === "none") {
+        increaseStar(pid, this.$store.state.user.userInfo.uid, 1, "normalToUp").then((res)=>{
+          // 1.显示大拇指上飞
+          $(`#up${index} .thumbs-up-box`).addClass("dotFlyUp")
+          // 2.点赞数+1
+          this.postings[index].star += res.data
+          if (res.data ===2) this.tmpStar[`star${index}`]+=1
+          // 3.背景变蓝色
+          $(`#up${index}`).css("backgroundColor", "blue")
+          window.thumbsUp = setTimeout(() => {
+            // 4.大拇指下滑
+            $(`#up${index} .thumbs-up-box`).addClass("dotFlyDown")
+          }, 1500)
+          window.showDot = setTimeout(() => {
+            // 5.显示八个圆点特效
+            $(`#up${index} .dot-box`).css("display", "block")
+            // 6.恢复点击事件
+            $(`#up${index}`).removeClass("disableClick")
+            $(`#down${index}`).removeClass("disableClick")
+          }, 2000)
+        }).catch(err=>{
+          $(`#up${index}`).removeClass("disableClick")
+          $(`#down${index}`).removeClass("disableClick")
+        })
+      }
+      // 已赞状态
+      else {
+        decreaseStar(pid, this.$store.state.user.userInfo.uid, 1, "upToNormal").then(res=>{
+          // 1.去除八个圆点盒子
+          $(`#up${index} .dot-box`).css("display", "none")
+          // 2.去除上下飞特效
+          $(`#up${index} .thumbs-up-box`).removeClass("dotFlyUp")
+          $(`#up${index} .thumbs-up-box`).removeClass("dotFlyDown")
+          // 3.点赞数-1
+          this.postings[index].star -= 1
+          // 4.背景恢复
+          $(`#up${index}`).css("backgroundColor", "#176bff")
+          // 5.恢复点击事件
+          $(`#up${index}`).removeClass("disableClick")
+          $(`#down${index}`).removeClass("disableClick")
+        }).catch(err=>{
+          $(`#up${index}`).removeClass("disableClick")
+          $(`#down${index}`).removeClass("disableClick")
+        })
+      }
     },
+
     // 点踩效果
-    thumbDown(index, star) {
+    thumbDown({pid,star},index) {
+      if (!this.tmpStar.hasOwnProperty(`star${index}`)) {
+        this.$set(this.tmpStar, `star${index}`, star)
+      }
       // 1.禁用点击事件
       $(`#up${index}`).addClass("disableClick")
       $(`#down${index}`).addClass("disableClick")
-      // 2.踩键、点赞字和数字消失
-      $(`#up${index} .thumbs-up-number`).hide(1000)
-      $(`#down${index}`).css("background", "#a7a7a7").hide(1000)
-      $(`#up${index} .dot-box`).css("display", "none")
-      $(`#up${index} .thumbs-up-box`).removeClass("dotFlyUp")
-      $(`#up${index} .thumbs-up-box`).removeClass("dotFlyDown")
-      // 3.大拇指翻转180°
-      $(`#up${index} .thumbs-up-box`).addClass("thumbRotate180")
-      // 4.背景变成灰色
-      $(`#up${index}`).css("background", "#a7a7a7")
+
       // 5.判断是否点赞，已点赞则点赞数-2，没点赞则点赞数-1
       if (this.tmpStar[`star${index}`] < star) {
-        this.postings[index].star -= 2
+        decreaseStar(pid, this.$store.state.user.userInfo.uid, 2, "upToDown").then(res=>{
+          this.postings[index].star -= 2
+          // 2.踩键、点赞字和数字消失
+          $(`#up${index} .thumbs-up-number`).hide(1000)
+          $(`#down${index}`).css("background", "#a7a7a7").hide(1000)
+          $(`#up${index} .dot-box`).css("display", "none")
+          $(`#up${index} .thumbs-up-box`).removeClass("dotFlyUp")
+          $(`#up${index} .thumbs-up-box`).removeClass("dotFlyDown")
+          // 3.大拇指翻转180°
+          $(`#up${index} .thumbs-up-box`).addClass("thumbRotate180")
+          // 4.背景变成灰色
+          $(`#up${index}`).css("background", "#a7a7a7")
+        })
       } else {
-        this.postings[index].star -= 1
+
+        decreaseStar(pid, this.$store.state.user.userInfo.uid, 1, "normalToDown").then(res=>{
+          this.postings[index].star -= 1
+          // 2.踩键、点赞字和数字消失
+          $(`#up${index} .thumbs-up-number`).hide(1000)
+          $(`#down${index}`).css("background", "#a7a7a7").hide(1000)
+          $(`#up${index} .dot-box`).css("display", "none")
+          $(`#up${index} .thumbs-up-box`).removeClass("dotFlyUp")
+          $(`#up${index} .thumbs-up-box`).removeClass("dotFlyDown")
+          // 3.大拇指翻转180°
+          $(`#up${index} .thumbs-up-box`).addClass("thumbRotate180")
+          // 4.背景变成灰色
+          $(`#up${index}`).css("background", "#a7a7a7")
+        })
       }
       // 6.给延时1.5s恢复点击事件
       window.backOrigin = setTimeout(() => {
@@ -220,9 +265,14 @@ export default {
       }, 1500)
       // console.log(this.postings[index].star)
     },
+
     // 浏览帖子详情
     viewPostingDetail(posting) {
-      this.$router.push({name:"postingDetail",query: {posting}})
+      // 参数转换成JSON字符串的原因：路由跳转时可以接收到对象中的参数，当该路由进行刷新是，参数会变成[object,object]，无法接受参数
+      // this.$router.push({name:"postingDetail",query: {posting:JSON.stringify(posting)}})
+
+      // 第二种方法：只传帖子的pid过去，在created钩子中请求后台获取数据，因此不用担心刷新页面时数据丢失
+      this.$router.push({name:"postingDetail", params: {pid: posting.pid}})
     }
   },
   watch: {
@@ -364,7 +414,7 @@ li {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  /* 2表示行数，看自己需求设置超出多少行后出现... */
+  /* 3表示行数，看自己需求设置超出多少行后出现... */
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }

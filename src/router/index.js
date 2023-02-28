@@ -21,6 +21,7 @@ const router = new VueRouter({
             path: "/",
             redirect: "/home",
         },
+        // 登录页
         {
             name: "login",
             path: "/login",
@@ -30,11 +31,15 @@ const router = new VueRouter({
                 title: "登录"
             }
         },
+        // 主页
         {
             name: "home",
             path: "/home",
             redirect: "/home/recommend",
             component: () => import("@/pages/Home"),
+            meta: {
+                title: "吉猪 - 电子布告栏"
+            },
             children: [
                 {
                     name: "recommend",
@@ -58,9 +63,6 @@ const router = new VueRouter({
                     }
                 },
             ],
-            meta: {
-                title: "吉猪 - 电子布告栏"
-            }
         },
         {
             name: "test",
@@ -76,6 +78,7 @@ const router = new VueRouter({
                 title: "发帖板"
             }
         },
+        // 发布帖子
         {
             name: "publishPosting",
             path: "/publishPosting/:uid",
@@ -83,19 +86,25 @@ const router = new VueRouter({
             meta: {
                 title: "写文章"
             },
-            props: {
-
-            }
         },
+        // 帖子详细内容
         {
             name: "postingDetail",
-            path: "/postingDetail",
+            path: "/postingDetail/:pid",
             component: () => import("@/pages/PostingDetail"),
             meta: {
                 title: '详情'
             },
-
         },
+        // 搜索
+        {
+            name: "search",
+            path: "/search",
+            component: () => import("@/pages/Search"),
+            meta: {
+                title: "搜索"
+            }
+        }
     ],
     // 跳转路由回到顶部，savedPosition 当且仅当 popstate 导航 (通过浏览器的 前进/后退 按钮触发) 时才可用。
     scrollBehavior(to, from, savedPosition) {
@@ -119,8 +128,7 @@ router.beforeEach((to, from, next) => {
             store.dispatch("user/getUserInfo", getToken()).then(res => {
                 next()
             })
-        }
-        else {
+        } else {
             if (to.meta.title) {
                 document.title = to.meta.title
             }

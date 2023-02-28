@@ -14,7 +14,7 @@ module.exports = defineConfig({
         open: true,
         proxy: {
             '/api': {
-                target: 'http://localhost:90', //请求后台gateway网关，由gateway分发接口
+                target: 'http://localhost:6000', //请求后台gateway网关，由gateway分发接口
                 changeOrigin: true, // 允许跨域
                 pathRewrite: {
                     '^/api': '' // 重写请求

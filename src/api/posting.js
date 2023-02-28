@@ -39,6 +39,7 @@ export function getLatestPosting(department, speciality, page = 1, limit = 8) {
         }
     })
 }
+
 // 测试版
 export function addPosting(formData) {
     return request({
@@ -47,6 +48,7 @@ export function addPosting(formData) {
         data: formData,
     })
 }
+
 // 正式版
 export function publishPosting(PostingInfo) {
     return request({
@@ -55,8 +57,9 @@ export function publishPosting(PostingInfo) {
         data: PostingInfo,
     })
 }
+
 // 获取校园热点 默认获取前十的热点
-export function getDepartmentsHotDots(limit=10) {
+export function getDepartmentsHotDots(limit = 10) {
     return request({
         url: '/posting/getDepartmentsHotDots',
         method: 'get',
@@ -65,6 +68,34 @@ export function getDepartmentsHotDots(limit=10) {
         },
     })
 }
+
+// 点赞数+1
+export function increaseStar(pid, uid, number,status) {
+    return request({
+        url: '/posting/increaseStar',
+        method: 'put',
+        params: {pid, uid, number,status}
+    })
+}
+
+// 点赞数-1
+export function decreaseStar(pid, uid, number,status) {
+    return request({
+        url: '/posting/decreaseStar',
+        method: 'put',
+        params: {pid, uid, number,status}
+    })
+}
+
+// 根据pid获取帖子
+export function getPostingByPid(pid) {
+    return request({
+        url: `/posting/getByPid/${pid}`,
+        method: 'get',
+    })
+}
+
+
 
 export function testUpload(formData) {
     return request({

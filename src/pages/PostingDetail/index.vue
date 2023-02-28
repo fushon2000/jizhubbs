@@ -33,7 +33,7 @@
       </div>
       <!-- 编辑时间 -->
       <div class="posting-edit-time">
-        发布于 {{posting.createTime}}
+        发布于 {{ posting.createTime }}
       </div>
       <div class="posting-tags">
         <ul>
@@ -43,7 +43,7 @@
       </div>
       <!-- 操作部分 -->
       <div class="posting-options">
-        <ContentActions :actionsData="posting"></ContentActions>
+        <ContentActions :posting="posting"></ContentActions>
       </div>
     </div>
     <!-- 评论区部分 -->
@@ -58,11 +58,13 @@
             placeholder="此处发表评论（字数限制1000字）"
             maxlength="1000"
             show-word-limit
-            v-model="commentContent"
+            v-model="comment.content"
             @focus="commentFocus"
             @blur="commentBlur">
         </el-input>
-        <button class="comment-input-button"><i class="el-icon-check"></i></button>
+        <button class="comment-input-button" @click="commitComment(comment)">
+          <i class="el-icon-check"></i>
+        </button>
       </div>
       <!-- 评论区主体 -->
       <div class="comment-main">
@@ -81,72 +83,48 @@
         <!-- 评论楼层 -->
         <div class="comment-floor">
           <ul>
-            <li class="floor">
-              <div class="avatar">
-                <img src="http://file.jizhubbs.cn/d5adfb0cced540138bff0f1469f18c17-2020-09-26 20-08-36.jpg">
-              </div>
+            <li class="floor" v-for="(commentItem, index) in commentList" :key="index">
+              <div class="avatar"><img :src="commentItem.user.avatar"></div>
               <div class="floor-main">
-                <div class="author">AxiosTTY</div>
-                <div class="comment-content">
-                  马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发
-                  马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发
-                  马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发
-                </div>
+                <div class="author">{{ commentItem.author }}</div>
+                <div class="comment-content">{{ commentItem.content }}</div>
                 <div class="floor-footer">
-                  <div class="time">
-                    回复于 2023-02-22
+                  <div class="time">回复于 {{ commentItem.createTime }}</div>
+                  <div class="repeat"><i class="el-icon-s-comment"></i> 回复</div>
+                  <div :id="`comment${commentItem.cid}`" class="like" v-if="!commentItem.star" @click="likeComment(commentItem.cid,index)">
+                    <i class="el-icon-star-on"></i> 点赞
                   </div>
-                  <div class="repeat"><i class="el-icon-s-comment"></i>回复</div>
-                  <div class="like"><i class="el-icon-star-on"></i>点赞</div>
+                  <div :id="`comment${commentItem.cid}`" class="like" v-if="commentItem.star" @click="likeComment(commentItem.cid,index)">
+                    <i class="el-icon-star-on"></i> {{ commentItem.star }}
+                  </div>
                 </div>
                 <ul>
-                  <li class="floor">
-                    <div class="avatar">
-                      <img src="http://file.jizhubbs.cn/d5adfb0cced540138bff0f1469f18c17-2020-09-26 20-08-36.jpg">
-                    </div>
+                  <li class="floor" v-for="(childItem, childIndex) in commentItem.children" :key="childIndex">
+                    <div class="avatar"><img :src="childItem.user.avatar"></div>
                     <div class="floor-main">
-                      <div class="author">AxiosTTY</div>
-                      <div class="comment-content">
-                        马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发
-                        马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发
-                        马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发
+                      <div class="author">
+                        {{ childItem.author }}
+                        <span class="author" v-if="childItem.parentCid !== commentItem.cid">
+                          <i class="el-icon-caret-right"></i>
+                          {{commentItem.children[commentItem.children.findIndex((item) => item.cid === childItem.parentCid)].author }}
+                        </span>
                       </div>
+                      <div class="comment-content">{{ childItem.content }}</div>
                       <div class="floor-footer">
                         <div class="time">
-                          回复于 2023-02-22
+                          回复于 {{ childItem.createTime }}
                         </div>
-                        <div class="repeat"><i class="el-icon-s-comment"></i>回复</div>
-                        <div class="like"><i class="el-icon-star-on"></i>点赞</div>
+                        <div class="repeat"><i class="el-icon-s-comment"></i> 回复</div>
+                        <div :id="`childComment${childItem.cid}`" class="like" v-if="!childItem.star" @click="childLikeComment(childItem.cid,childIndex,index)">
+                          <i class="el-icon-star-on"></i> 点赞
+                        </div>
+                        <div :id="`childComment${childItem.cid}`" class="like" v-if="childItem.star" @click="childLikeComment(childItem.cid,childIndex,index)">
+                          <i class="el-icon-star-on"></i> {{ childItem.star }}
+                        </div>
                       </div>
-                      <ul>
-                        <li></li>
-                      </ul>
                     </div>
                   </li>
                 </ul>
-              </div>
-            </li>
-            <li class="floor">
-              <div class="avatar">
-                <img src="http://file.jizhubbs.cn/d5adfb0cced540138bff0f1469f18c17-2020-09-26 20-08-36.jpg"
-                     style=""
-                >
-              </div>
-              <div class="floor-main">
-                <div class="author">AxiosTTY</div>
-                <div class="comment-content">
-                  马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发
-                  马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发
-                  马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发马德发
-
-                </div>
-                <div class="floor-footer">
-                  <div class="time">
-                    回复于 2023-02-22
-                  </div>
-                  <div class="repeat"><i class="el-icon-s-comment"></i>回复</div>
-                  <div class="like"><i class="el-icon-star-on"></i>点赞</div>
-                </div>
               </div>
             </li>
           </ul>
@@ -158,7 +136,9 @@
 
 <script>
 import $ from 'jquery'
-import ContentActions from '@/pages/PublishedShow/ContentActions'
+import ContentActions from '@/components/ContentActions'
+import {getCommentListByPid, likeComment, submitComment} from "@/api/comment";
+import {getPostingByPid} from "@/api/posting";
 
 export default {
   name: "",
@@ -167,15 +147,18 @@ export default {
   },
   data() {
     return {
-      commentContent: '',
-      commentDisplayPattern: '默认',
-      actionsData: {
-        star: 0,
-        save: 0,
-        comment: 0,
+      comment: {
+        uid: '',
+        pid: '',
+        parentCid: 0,
+        author: '',
+        content: '',
+        department: '',
+        speciality: '',
       },
-      testHtml: "<p><strong>测试正文</strong></p><p><strong><img src=\"http://file.jizhubbs.cn/b9a65b215b034ceb9d026230833d7cf4-12.jpg\" style=\"width: 300px;\" class=\"fr-fic fr-dib\"></strong></p><p><strong><br></strong></p><p><strong><img src=\"http://file.jizhubbs.cn/2926a81bbdf945ef94c70a595c766582-1111.jpg\" style=\"width: 300px;\" class=\"fr-fic fr-dib fr-fir\"></strong></p><p style=\"text-align: center;\"><strong><img src=\"http://file.jizhubbs.cn/d5adfb0cced540138bff0f1469f18c17-2020-09-26 20-08-36.jpg\" style=\"width: 300px;\" class=\"fr-fic fr-dib fr-fil\">我giao</strong></p>",
-      posting: '',
+      commentDisplayPattern: '默认',
+      posting: {},
+      commentList: [],
     }
   },
   methods: {
@@ -188,19 +171,67 @@ export default {
     // 评论框失去焦点
     commentBlur() {
       $("#comment-input").attr("placeholder", "此处发表评论（字数限制1000字）")
-      $(".comment-input-button").css("display", "none")
+      // $(".comment-input-button").css("display", "none")
+    },
+    // 提交评论
+    commitComment(comment) {
+      comment.pid = this.posting.pid
+      comment.uid = this.$store.state.user.userInfo.uid
+      // 是否为实名评论
+      comment.author = this.posting.noAnonymityComment ? this.$store.state.user.userInfo.realName : this.$store.state.user.userInfo.username
+      submitComment(comment).then(res => {
+        this.$message.success({
+          message: "评论成功^_^",
+          duration: "1500",
+          onClose(msg) {
+            window.location.reload()
+          }
+        })
+      }).catch(err => {
+      })
+    },
+    // 给父评论点赞
+    likeComment(cid,index) {
+      likeComment(cid, this.$store.state.user.userInfo.uid).then(res=>{
+        if (res.data === -1) {
+          this.commentList[index].star -= 1
+          $(`#comment${cid}`).css("color","rgb(153, 153, 153)")
+        }
+        if (res.data === 1) {
+          this.commentList[index].star += 1
+          $(`#comment${cid}`).css("color","rgb(51 109 255)")
+        }
+      })
+    },
+    // 给子评论点赞
+    childLikeComment(cid,index,parentIndex) {
+      likeComment(cid, this.$store.state.user.userInfo.uid).then(res=>{
+        if (res.data === -1) {
+          this.commentList[parentIndex].children[index].star -= 1
+          $(`#childComment${cid}`).css("color","rgb(153, 153, 153)")
+
+        }
+        if (res.data === 1) {
+          this.commentList[parentIndex].children[index].star += 1
+          $(`#childComment${cid}`).css("color","rgb(51 109 255)")
+        }
+      })
     },
     // 选择评论的显示模式 （默认，最近）
     commentDisplayPatternChange(pattern) {
       console.log(pattern)
     }
   },
-  computed: {
-
-  },
+  computed: {},
   created() {
-    this.posting = this.$route.query.posting
-
+    // this.posting = JSON.parse(this.$route.query.posting)
+    getPostingByPid(this.$route.params.pid).then(res => {
+      this.posting = res.data
+    })
+    getCommentListByPid(this.$route.params.pid).then(res => {
+      this.commentList = res.data
+      console.log(this.commentList)
+    })
   }
 }
 </script>
@@ -214,6 +245,7 @@ li {
   list-style: none;
   display: inline-block;
 }
+
 /* 帖子详情部分 */
 .posting-detail {
   width: 100%;
@@ -273,7 +305,7 @@ li {
   width: 500px;
   flex: 1 1;
   margin-left: 14px;
-  color: rgb(68,68,68);
+  color: rgb(68, 68, 68);
 }
 
 .author-name {
@@ -292,7 +324,7 @@ li {
 .focus {
   width: 80px;
   height: 70%;
-  background-color: rgb(64,158,255);
+  background-color: rgb(64, 158, 255);
   border: none;
   border-radius: 4px;
   color: white;
@@ -336,6 +368,7 @@ li {
 .posting-options {
   position: sticky;
   bottom: 0;
+  background-color: white;
 }
 
 /* 评论区部分 */
@@ -449,12 +482,15 @@ li {
   font-size: 13px;
   color: rgb(153, 153, 153);
 }
+
 .time {
   flex: 1 1;
 }
+
 .repeat {
   margin-right: 12px;
 }
+
 .repeat, .like {
   cursor: pointer;
 }

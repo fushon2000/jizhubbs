@@ -14,8 +14,8 @@
         <div class="search">
           <div class="search-header">
             <el-carousel :interval="3000" height="160px" direction="vertical">
-              <el-carousel-item v-for="item in 6" :key="item">
-                <h3 class="medium">{{ item }}</h3>
+              <el-carousel-item v-for="(image,index) in searchBoxCarouselImages" :key="index">
+                <img :src="image" height="100%" width="100%"/>
               </el-carousel-item>
             </el-carousel>
           </div>
@@ -174,6 +174,14 @@ export default {
         "http://jizhubbs.oss-cn-shenzhen.aliyuncs.com/2020-09-26%2020-08-08.jpg",
         "http://jizhubbs.oss-cn-shenzhen.aliyuncs.com/2020-09-26%2020-08-36.jpg",
         "http://jizhubbs.oss-cn-shenzhen.aliyuncs.com/2020-09-26%2020-09-42.jpg"
+      ],
+      searchBoxCarouselImages: [
+        "https://img1.baidu.com/it/u=2841033695,3328217147&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800",
+        "https://img2.baidu.com/it/u=2864589139,1134218305&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500",
+        "https://img2.baidu.com/it/u=3207721921,3451553052&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500",
+        "https://img2.baidu.com/it/u=3331543825,980995998&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800",
+        "https://img1.baidu.com/it/u=4050062314,1116360005&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500",
+        "https://picnew10.photophoto.cn/20160731/xunyicaohuahaifengjingtupiansucai-26365586_1.jpg",
       ],
       searchContent: "",
       inPlaceholder: true,
