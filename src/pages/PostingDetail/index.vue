@@ -37,8 +37,7 @@
       </div>
       <div class="posting-tags">
         <ul>
-          <li>SpringCloud</li>
-          <li>JAVA</li>
+          <li v-for="(tag,index) in posting.other.tags" :key="index">{{ tag }}</li>
         </ul>
       </div>
       <!-- 操作部分 -->
@@ -62,7 +61,7 @@
             @focus="commentFocus"
             @blur="commentBlur">
         </el-input>
-        <button class="comment-input-button" @click="commitComment(comment)">
+        <button id="comment-input-button" class="comment-input-button" @click="commitPostingComment(comment)">
           <i class="el-icon-check"></i>
         </button>
       </div>
@@ -90,7 +89,7 @@
                 <div class="comment-content">{{ commentItem.content }}</div>
                 <div class="floor-footer">
                   <div class="time">回复于 {{ commentItem.createTime }}</div>
-                  <div class="repeat"><i class="el-icon-s-comment"></i> 回复</div>
+                  <div class="repeat"  @click="showCommentBox(commentItem.cid, commentItem.author)"><i class="el-icon-s-comment"></i> 回复</div>
                   <div :id="`comment${commentItem.cid}`" class="like" v-if="!commentItem.star" @click="likeComment(commentItem.cid,index)">
                     <i class="el-icon-star-on"></i> 点赞
                   </div>
@@ -98,6 +97,22 @@
                     <i class="el-icon-star-on"></i> {{ commentItem.star }}
                   </div>
                 </div>
+                <!-- 回复其他评论 -->
+                <div :id="`commentBox${commentItem.cid}`" style="display: none" class="comment-publish">
+                  <el-input
+                      :id="`comment-input${commentItem.cid}`"
+                      type="textarea"
+                      autosize
+                      resize="none"
+                      placeholder="此处发表评论（字数限制300字）"
+                      maxlength="300"
+                      show-word-limit
+                      v-model="commentItem.newComment">
+                  </el-input>
+                  <button :id="`commentButton${commentItem.cid}`" class="comment-input-button" @click="commitCommentComment(comment2,commentItem.cid,commentItem.newComment)">
+                    <i class="el-icon-check"></i>
+                  </button>
+                </div  >
                 <ul>
                   <li class="floor" v-for="(childItem, childIndex) in commentItem.children" :key="childIndex">
                     <div class="avatar"><img :src="childItem.user.avatar"></div>
@@ -114,7 +129,7 @@
                         <div class="time">
                           回复于 {{ childItem.createTime }}
                         </div>
-                        <div class="repeat"><i class="el-icon-s-comment"></i> 回复</div>
+                        <div class="repeat" @click="showCommentBox(childItem.cid, childItem.author)"><i class="el-icon-s-comment"></i> 回复</div>
                         <div :id="`childComment${childItem.cid}`" class="like" v-if="!childItem.star" @click="childLikeComment(childItem.cid,childIndex,index)">
                           <i class="el-icon-star-on"></i> 点赞
                         </div>
@@ -122,6 +137,22 @@
                           <i class="el-icon-star-on"></i> {{ childItem.star }}
                         </div>
                       </div>
+                      <!-- 回复其他评论 -->
+                      <div :id="`commentBox${childItem.cid}`" style="display: none" class="comment-publish">
+                        <el-input
+                            :id="`comment-input${childItem.cid}`"
+                            type="textarea"
+                            autosize
+                            resize="none"
+                            placeholder="此处发表评论（字数限制300字）"
+                            maxlength="300"
+                            show-word-limit
+                            v-model="childItem.newComment">
+                        </el-input>
+                        <button :id="`commentButton${childItem.cid}`" class="comment-input-button" @click="commitCommentComment(comment2,childItem.cid,childItem.newComment)">
+                          <i class="el-icon-check"></i>
+                        </button>
+                      </div  >
                     </div>
                   </li>
                 </ul>
@@ -147,6 +178,7 @@ export default {
   },
   data() {
     return {
+      // 对帖子的评论
       comment: {
         uid: '',
         pid: '',
@@ -156,25 +188,34 @@ export default {
         department: '',
         speciality: '',
       },
+      // 对评论的评论
+      comment2: {
+        uid: '',
+        pid: '',
+        parentCid: 0,
+        author: '',
+        content: '',
+      },
+
       commentDisplayPattern: '默认',
       posting: {},
       commentList: [],
     }
   },
   methods: {
-    // 评论框获取焦点
+    // 帖子的评论框获取焦点
     commentFocus() {
       $("#comment-input").attr("placeholder", "评论千万条，友善第一条。")
-      $(".comment-input-button").css("display", "block")
+      $("#comment-input-button").show()
 
     },
-    // 评论框失去焦点
+    // 帖子的评论框失去焦点
     commentBlur() {
       $("#comment-input").attr("placeholder", "此处发表评论（字数限制1000字）")
-      // $(".comment-input-button").css("display", "none")
+      // $(".comment-input-button").hide()
     },
-    // 提交评论
-    commitComment(comment) {
+    // 提交帖子评论
+    commitPostingComment(comment) {
       comment.pid = this.posting.pid
       comment.uid = this.$store.state.user.userInfo.uid
       // 是否为实名评论
@@ -182,12 +223,29 @@ export default {
       submitComment(comment).then(res => {
         this.$message.success({
           message: "评论成功^_^",
-          duration: "1500",
+          duration: "1000",
           onClose(msg) {
             window.location.reload()
           }
         })
-      }).catch(err => {
+      })
+    },
+    // 提交评论的评论
+    commitCommentComment(comment, parentCid,newComment) {
+      comment.pid = this.posting.pid
+      comment.uid = this.$store.state.user.userInfo.uid
+      // 是否为实名评论
+      comment.author = this.posting.noAnonymityComment ? this.$store.state.user.userInfo.realName : this.$store.state.user.userInfo.username
+      comment.parentCid = parentCid
+      comment.content = newComment
+      submitComment(comment).then(res => {
+        this.$message.success({
+          message: "评论成功^_^",
+          duration: "1000",
+          onClose(msg) {
+            window.location.reload()
+          }
+        })
       })
     },
     // 给父评论点赞
@@ -202,6 +260,25 @@ export default {
           $(`#comment${cid}`).css("color","rgb(51 109 255)")
         }
       })
+    },
+    // 回复父评论
+    showCommentBox(cid, commentAuthor) {
+      // 输入框整体
+      let $cb = $(`#commentBox${cid}`)
+      // 输入框input
+      let $ci = $(`#comment-input${cid}`)
+      // 提交按钮
+      let $button = $(`#commentButton${cid}`)
+      if ($cb.is(":hidden")) {
+        $cb.show()
+        $ci.attr("placeholder",`回复 ${commentAuthor}`)
+        $ci.focus()
+        $button.show()
+      } else {
+        $button.show()
+        $cb.hide()
+      }
+
     },
     // 给子评论点赞
     childLikeComment(cid,index,parentIndex) {
@@ -230,7 +307,7 @@ export default {
     })
     getCommentListByPid(this.$route.params.pid).then(res => {
       this.commentList = res.data
-      console.log(this.commentList)
+      // console.log(this.commentList)
     })
   }
 }

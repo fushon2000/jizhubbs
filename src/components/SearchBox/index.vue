@@ -10,7 +10,11 @@
     <div class="SearchMain">
       <div class="SearchBar">
         <label style="cursor: text" for="search" v-show="inPlaceholder"><i class="el-icon-search">&nbsp;&nbsp;请输入关键字进行搜索</i></label>
-        <input type="text" id="search" @blur="showPlaceholder" @focus="hidePlaceholder" v-model="searchContent">
+        <input type="text" id="search"
+               @blur="showPlaceholder"
+               @focus="hidePlaceholder"
+               @keydown.enter="search(searchContent)"
+               v-model="searchContent">
       </div>
       <div class="SearchHistory">
         <ul>
@@ -50,6 +54,10 @@ export default {
     hidePlaceholder() {
       this.inPlaceholder = false
     },
+    search(content) {
+      console.log(content)
+      this.$router.push({name: "search",query:{content}})
+    },
   }
 }
 </script>
@@ -57,11 +65,12 @@ export default {
 <style scoped>
 .SearchBox {
   width: 300px;
-  border-radius: 5px;
-  overflow: hidden;
+
 }
 .carousel-picture {
   width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
 }
 .el-carousel__item:nth-child(2n) {
   background-color: #99a9bf;

@@ -12,26 +12,28 @@
         </div>
         <!-- 搜索框 -->
         <div class="search">
-          <div class="search-header">
-            <el-carousel :interval="3000" height="160px" direction="vertical">
-              <el-carousel-item v-for="(image,index) in searchBoxCarouselImages" :key="index">
-                <img :src="image" height="100%" width="100%"/>
-              </el-carousel-item>
-            </el-carousel>
-          </div>
-          <div class="search-bottom">
-            <div class="search-box">
-              <label style="cursor: text" for="search" v-show="inPlaceholder"><i class="el-icon-search">&nbsp;&nbsp;请输入关键字进行搜索</i></label>
-              <input type="text" id="search" @blur="showPlaceholder" @focus="hidePlaceholder" v-model="searchContent">
-            </div>
-            <ul>
-              <li><a href="#">JAVA</a></li>
-              <li><a href="#">技术</a></li>
-              <li><a href="#">金融</a></li>
-              <li><a href="#">工商</a></li>
-            </ul>
-          </div>
+<!--          <div class="search-header">-->
+<!--            <el-carousel :interval="3000" height="160px" direction="vertical">-->
+<!--              <el-carousel-item v-for="(image,index) in searchBoxCarouselImages" :key="index">-->
+<!--                <img :src="image" height="100%" width="100%"/>-->
+<!--              </el-carousel-item>-->
+<!--            </el-carousel>-->
+<!--          </div>-->
+<!--          <div class="search-bottom">-->
+<!--            <div class="search-box">-->
+<!--              <label style="cursor: text" for="search" v-show="inPlaceholder"><i class="el-icon-search">&nbsp;&nbsp;请输入关键字进行搜索</i></label>-->
+<!--              <input type="text" id="search" @blur="showPlaceholder" @focus="hidePlaceholder" v-model="searchContent" @keydown.enter="search(searchContent)">-->
+<!--            </div>-->
+<!--            <ul>-->
+<!--              <li><a href="#">JAVA</a></li>-->
+<!--              <li><a href="#">技术</a></li>-->
+<!--              <li><a href="#">金融</a></li>-->
+<!--              <li><a href="#">工商</a></li>-->
+<!--            </ul>-->
+<!--          </div>-->
+          <SearchBox style="width: 100%;  border-radius: 14px; overflow: hidden"></SearchBox>
         </div>
+
       </div>
       <div class="home-box-container">
         <!-- 校园热点时事排行模块 -->
@@ -155,15 +157,15 @@
 import $ from 'jquery'
 import Recommend from './Recommend'
 import Latest from './Latest'
+import SearchBox from '@/components/SearchBox'
 import {getDepartments, getSpecialityByDictCode} from "@/api/dataDictionary";
 import {getDepartmentsHotDots} from "@/api/posting";
-import {getCurrentInstance} from "vue";
-
 export default {
   name: "Home",
   components: {
     Recommend,
     Latest,
+    SearchBox
   },
   data() {
     return {
@@ -640,7 +642,7 @@ li {
   border-radius: 14px;
   overflow: hidden;
   height: 100%;
-  min-width: 380px;
+  width: 380px;
 }
 
 .search-header {

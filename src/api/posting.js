@@ -95,6 +95,15 @@ export function getPostingByPid(pid) {
     })
 }
 
+// 搜索帖子 参数：关键字，显示模式（默认、最近）
+export function getSearchedPostingList(content, pattern, page, limit=10) {
+    return request({
+        url: '/posting/getSearched',
+        method: 'get',
+        params: {content,pattern, page, limit}
+    })
+}
+
 
 
 export function testUpload(formData) {

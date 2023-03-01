@@ -4,8 +4,8 @@
       {{ posting.title }}
     </h2>
     <div class="item-content-box" @click="viewPostingDetail(posting)">
-      <div class="item-image">
-        <img :src="posting.image[0]" alt="">
+      <div class="item-image" v-if="posting.images[0]">
+        <img :src="posting.images[0].url" alt="">
       </div>
       <div class="item-content">
         {{ posting.content | textFilter }}
@@ -55,6 +55,7 @@ export default {
 }
 .item-content-box {
   display: flex;
+  margin-top: 8px;
 }
 .item-content-box:hover {
   color: rgb(160, 160, 160);
@@ -63,6 +64,7 @@ export default {
 .item-image {
   width: 190px;
   height: 105px;
+  margin-right: 14px;
   border-radius: 5px;
   overflow: hidden;
 }
@@ -74,7 +76,6 @@ export default {
 }
 
 .item-content {
-  margin-left: 14px;
   height: 100%;
   width: 0;
   flex: 1;
