@@ -84,21 +84,16 @@ export default {
     showCreate() {
       this.$bus.emit("changeShowCreate", true)
       this.$bus.emit("changeShow", false)
-    }
+    },
   },
   created() {
-    console.log(this.postingSave.pid)
     this.getPackageList()
+    console.log("pid",this.postingSave.pid)
   },
   mounted() {
-    // let finalPos = $(document).scrollTop()
-    // document.querySelector('body').addEventListener('mousewheel',function (e) {
-    //   e.preventDefault()
-    // }, {passive: false})
     $('body').css("overflow", "hidden");
   },
   beforeDestroy() {
-    // $(document).unbind("mousewheel")
     $('body').css("overflow", "auto");
   }
 }

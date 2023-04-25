@@ -166,20 +166,25 @@
         </div>
       </div>
     </div>
+    <!-- 帖子收藏遮罩层 -->
+    <SaveMask v-if="saveMask.show" :pid="$route.params.pid" style="width: 100%"></SaveMask>
+    <!-- 创建收藏夹遮罩层 -->
+    <CreatePostingPackage v-if="saveMask.showCreate" style="width: 100%"></CreatePostingPackage>
   </div>
 </template>
 
 <script>
 import $ from 'jquery'
-import ContentActions from '@/components/ContentActions'
+import ContentActions from '@/pages/PostingDetail/ContentActions'
 import {getCommentListByPid, getCommentListOrderByTime, likeComment, submitComment} from "@/api/comment";
 import {getPostingByPid} from "@/api/posting";
-import {getUserInfo} from "@/api/user";
+import SaveMask from '@/pages/PostingDetail/SaveMask'
+import CreatePostingPackage from '@/pages/PostingDetail/CreatePostingPackage'
 
 export default {
-  name: "",
+  name: "PostingDetail",
   components: {
-    ContentActions
+    ContentActions, SaveMask, CreatePostingPackage
   },
   data() {
     return {
@@ -214,6 +219,14 @@ export default {
       commentList: [],
       // 作者信息
       userInfo: {},
+      saveMask: {
+        // 是否显示收藏遮罩层
+        show: false,
+        // 将pid传到遮罩层组件中
+        pid: '',
+        // 是否显示创建收藏夹遮罩层
+        showCreate: false,
+      },
     }
   },
   computed: {
@@ -329,18 +342,31 @@ export default {
           this.commentList = res.data
         })
       }
-    }
+    },
   },
   created() {
-    // this.posting = JSON.parse(this.$route.query.posting)
     getPostingByPid(this.$route.params.pid).then(res => {
       this.posting = res.data
     })
-
     getCommentListByPid(this.$route.params.pid).then(res => {
       this.commentList = res.data
-      // console.log(this.commentList)
     })
+  },
+  mounted() {
+    //绑定隐藏收藏遮罩层事件，触发组件为SaveMask
+    this.$bus.on('changeShow', (isShow, pid)=>{
+      this.saveMask.pid = pid
+      this.saveMask.show = isShow
+    })
+    //绑定改变创建收藏夹遮罩层事件，触发组件为CreatePostingPackage
+    this.$bus.on('changeShowCreate', (isShow)=>{
+      this.saveMask.showCreate = isShow
+    })
+  },
+  beforeDestroy() {
+    //解绑隐藏收藏遮罩层事件，触发组件为SaveMask
+    this.$bus.off('changeShow')
+    this.$bus.off('changeShowCreate')
   }
 }
 </script>
@@ -442,7 +468,6 @@ li {
   cursor: pointer;
 }
 
-
 .posting-rich-text-container {
   overflow: hidden;
   position: relative;
@@ -488,8 +513,9 @@ li {
 
 .comment-publish {
   position: relative;
+
   width: 100%;
-  z-index: -1;
+  z-index: 0;
 }
 
 /*.comment-publish input {*/
@@ -543,7 +569,6 @@ li {
 
 .display-pattern {
   display: flex;
-  z-index: -1;
 }
 
 .comment-floor {

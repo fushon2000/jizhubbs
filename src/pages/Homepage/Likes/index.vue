@@ -139,6 +139,7 @@ export default {
     },
   },
   created() {
+    this.init()
   },
   mounted() {
     this.$bus.on('changeShowCreate', (val, postingPackage) => {

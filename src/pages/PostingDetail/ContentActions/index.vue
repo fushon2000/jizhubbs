@@ -28,10 +28,6 @@
         <li @click="handleSaveMask(posting.pid)"><i class="el-icon-star-on" style="padding-right: 5px;"></i>{{ posting.save }}收藏</li>
       </ul>
     </div>
-    <!-- 帖子收藏遮罩层 -->
-    <SaveMask v-if="saveMask.show" :pid="saveMask.pid"></SaveMask>
-    <!-- 创建收藏夹遮罩层 -->
-    <CreatePostingPackage v-if="saveMask.showCreate"></CreatePostingPackage>
   </div>
 </template>
 
@@ -58,14 +54,6 @@ export default {
       // 帖子详情
       // 用于保存原始点赞数
       tmpStar: 0,
-      saveMask: {
-        // 是否显示收藏遮罩层
-        show: false,
-        // 将pid传到遮罩层组件中
-        pid: '',
-        // 是否显示创建收藏夹遮罩层
-        showCreate: false,
-      },
     }
   },
   methods: {
@@ -193,21 +181,8 @@ export default {
     },
     // 操作收藏遮罩层
     handleSaveMask(pid) {
-      this.saveMask.show = !this.saveMask.show
-      //将pid传到遮罩组件中
-      this.saveMask.pid = pid
-      // this.$bus.emit('changeShow', true)
+      this.$bus.emit('changeShow', true, pid)
     },
-  },
-  mounted() {
-    //绑定隐藏收藏遮罩层事件，触发组件为SaveMask
-    this.$bus.on('changeShow', (val)=>{
-      this.saveMask.show = val
-    })
-    //绑定改变创建收藏夹遮罩层事件，触发组件为CreatePostingPackage
-    this.$bus.on('changeShowCreate', (val)=>{
-      this.saveMask.showCreate = val
-    })
   },
   beforeDestroy() {
     clearTimeout(window.thumbsUp)
