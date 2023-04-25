@@ -70,6 +70,15 @@ service.interceptors.response.use(
     },
     error => {
         console.log('err' + error) // for debug
+        // 后端没启动或出现错误
+        if (error.response.status === 500 || error.response.status === 404) {
+            Message({
+                message: "服务器正在维护中，请稍后再试(。・＿・。)ﾉI’m sorry~",
+                type: 'error',
+                duration: 2 * 1000
+            });
+            return
+        }
         Message({
             message: error.message,
             type: 'error',

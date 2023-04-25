@@ -55,7 +55,6 @@ export default {
       this.inPlaceholder = false
     },
     search(content) {
-      console.log(content)
       this.$router.push({name: "search",query:{content}})
     },
   }

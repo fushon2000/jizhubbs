@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import PublishedShow from '@/pages/PublishedShow'
 import store from "@/store";
 import {getToken, removeToken} from "@/utils/auth";
 //使用插件
@@ -20,6 +19,11 @@ const router = new VueRouter({
         {
             path: "/",
             redirect: "/home",
+        },
+        {
+            name: "blank",
+            path: "/blank",
+            component: () => import("@/pages/Blank"),
         },
         // 登录页
         {
@@ -104,7 +108,51 @@ const router = new VueRouter({
             meta: {
                 title: "搜索"
             }
-        }
+        },
+        // 学院模块
+        {
+            name: 'department',
+            path: '/department',
+            component: () => import('@/pages/Department'),
+        },
+        // 个人主页 要放到最后一个匹配，因为任何路径都可以匹配/:username，这就导致会进入该路由
+        {
+            name: "homepage",
+            path: "/:username",
+            component: () => import("@/pages/Homepage"),
+            redirect: "/:username/overview",
+            meta: {
+                title: store.state.user.userInfo.username
+            },
+            children: [
+                {
+                    // 个人主页的概况
+                    name: "overview",
+                    path: "overview",
+                    component: () => import("@/pages/Homepage/Overview"),
+                },
+                {
+                    // 发布的所有帖子
+                    name: "repositories",
+                    path: "repositories",
+                    component: () => import("@/pages/Homepage/Repositories"),
+                },
+                {
+                    // 点过赞的帖子
+                    name: "stars",
+                    path: "stars",
+                    component: () => import("@/pages/Homepage/Stars"),
+                },
+                {
+                    // 收藏的帖子
+                    name: "likes",
+                    path: "likes",
+                    component: () => import("@/pages/Homepage/Likes"),
+                }
+            ]
+        },
+
+
     ],
     // 跳转路由回到顶部，savedPosition 当且仅当 popstate 导航 (通过浏览器的 前进/后退 按钮触发) 时才可用。
     scrollBehavior(to, from, savedPosition) {
@@ -115,6 +163,7 @@ const router = new VueRouter({
         }
     },
 })
+
 router.beforeEach((to, from, next) => {
     // 已登录
     if (getToken()) {
@@ -138,11 +187,16 @@ router.beforeEach((to, from, next) => {
     // 未登录
     else {
         document.title = "登录"
-        if (to.name === 'login') {
+        if (to.path==='/department') {
+            next()
+        }
+        else if (to.name === 'login') {
             next()
         } else {
             next("/login")
         }
+
     }
 })
+
 export default router

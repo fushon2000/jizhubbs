@@ -6,19 +6,18 @@
     </div>
     <div class="header-items">
       <ul id="header-ul">
-        <li>首页</li>
+        <li @click="toHome">首页</li>
         <li>模块</li>
         <li>关于</li>
         <li v-if="userInfo">
           <div class="personal-center">
             <div class="avatar">
-<!--              <el-avatar :src="userInfo.avatar" :size="30"></el-avatar>-->
               <el-popover
                   placement="bottom-start"
                   width="110"
                   trigger="hover">
                 <table class="avatar-table" style="margin: 2px 0;border-collapse: collapse;">
-                  <tr style="display: block; padding: 6px;" @click="toIdentity">
+                  <tr style="display: block; padding: 6px;" @click="homepage">
                     <td style="width: 30px; text-align: center;"><i class="el-icon-s-home"></i></td>
                     <td><span>个人信息</span></td>
                   </tr>
@@ -48,6 +47,10 @@ export default {
     }
   },
   methods: {
+    // 返回首页
+    toHome() {
+      this.$router.push({name:"home"})
+    },
     // 返回顶部，平滑滚动
     toTop(){
       window.scrollTo({
@@ -55,8 +58,8 @@ export default {
         behavior:"smooth"
       })
     },
-    toIdentity(){
-      this.$router.push("/identity")
+    homepage(){
+      this.$router.push({name: "homepage",params:{username:this.$store.state.user.userInfo.username}})
     },
     signOut(){
       this.$store.dispatch("user/removeToken")

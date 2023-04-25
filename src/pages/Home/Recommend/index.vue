@@ -45,7 +45,9 @@
                 </div>
               </li>
               <li :id="`down${index}`" @click="thumbDown(index,posting.star)"><i class="el-icon-caret-bottom"/></li>
-              <li><i class="el-icon-chat-line-round" style="padding-right: 5px;"></i>{{ posting.comment }}评论</li>
+              <li>
+                <i class="el-icon-chat-line-round" style="padding-right: 5px;"></i>{{ posting.comment }}评论
+              </li>
               <li><i class="el-icon-star-on" style="padding-right: 5px;"></i>{{ posting.save }}收藏</li>
             </ul>
           </div>
@@ -63,9 +65,11 @@
 <script>
 import $ from 'jquery'
 import {getRecommendPosting} from "@/api/posting";
+import SaveMask from '@/components/SaveMask'
 
 export default {
   name: "Recommend",
+  components: {SaveMask},
   data() {
     return {
       // 是否处于触底加载状态

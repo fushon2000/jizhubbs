@@ -12,7 +12,7 @@ export function submitComment(comment) {
 // 根据帖子ID获取该帖子的评论树形结构
 export function getCommentListByPid(pid) {
     return request({
-        url: '/posting/comment/getPostingCommentTree',
+        url: '/posting/comment/getPostingCommentList',
         method: 'get',
         params: {pid}
     })
@@ -24,5 +24,14 @@ export function likeComment(cid, uid) {
         url: '/posting/comment/like',
         method: 'put',
         params: {cid, uid}
+    })
+}
+
+// 根据帖子ID获取该帖子的评论树形结构  按时间排序Desc
+export function getCommentListOrderByTime(pid) {
+    return request({
+        url: '/posting/comment/getLatestPostingCommentList',
+        method: 'get',
+        params: {pid}
     })
 }

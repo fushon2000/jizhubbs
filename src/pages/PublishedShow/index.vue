@@ -66,18 +66,28 @@
                 </div>
               </li>
               <li :id="`down${index}`" @click="thumbDown(posting,index)"><i class="el-icon-caret-bottom"/></li>
-              <li><i class="el-icon-chat-line-round" style="padding-right: 5px;"></i>{{ posting.comment }}评论</li>
-              <li><i class="el-icon-star-on" style="padding-right: 5px;"></i>{{ posting.save }}收藏</li>
+              <li>
+                <i class="el-icon-chat-line-round" style="padding-right: 5px;"></i>{{ posting.comment }}评论
+              </li>
+              <li  @click="handleSaveMask(posting.pid)">
+                <i class="el-icon-star-on" style="padding-right: 5px;"></i>{{ posting.save }}收藏
+              </li>
             </ul>
           </div>
         </div>
       </li>
     </ul>
+    <!-- 加载Box以及加载动画 -->
     <div class="loading-box" v-show="this.isLoad">
       <ul class="loading" ref="loading">
         <li v-for="(word, index) in this.loadingMessage">{{ word }}</li>
       </ul>
     </div>
+    <!-- 帖子收藏遮罩层 -->
+    <SaveMask v-if="saveMask.show" :pid="saveMask.pid"></SaveMask>
+    <!-- 创建收藏夹遮罩层 -->
+    <CreatePostingPackage v-if="saveMask.showCreate"></CreatePostingPackage>
+
   </div>
 </template>
 
@@ -85,9 +95,12 @@
 import $ from 'jquery'
 import {getRecommendPosting, getLatestPosting} from "@/api/posting";
 import {increaseStar, decreaseStar} from "@/api/posting";
+import SaveMask from '@/components/SaveMask'
+import CreatePostingPackage from '@/components/SaveMask/CreatePostingPackage'
 
 export default {
   name: "Posting",
+  components: {SaveMask, CreatePostingPackage},
   filters: {
     // 去除标签
     textFilter(html) {
@@ -120,6 +133,14 @@ export default {
       // 显示哪个院系的帖子
       // department: '计算机学院',
       // speciality: '软件工程',
+      saveMask: {
+        // 是否显示收藏遮罩层
+        show: false,
+        // 将pid传到遮罩层组件中
+        pid: '',
+        // 是否显示创建收藏夹遮罩层
+        showCreate: false,
+      },
     }
   },
   methods: {
@@ -217,7 +238,6 @@ export default {
         })
       }
     },
-
     // 点踩效果
     thumbDown({pid,star},index) {
       if (!this.tmpStar.hasOwnProperty(`star${index}`)) {
@@ -265,7 +285,6 @@ export default {
       }, 1500)
       // console.log(this.postings[index].star)
     },
-
     // 浏览帖子详情
     viewPostingDetail(posting) {
       // 参数转换成JSON字符串的原因：路由跳转时可以接收到对象中的参数，当该路由进行刷新是，参数会变成[object,object]，无法接受参数
@@ -273,7 +292,13 @@ export default {
 
       // 第二种方法：只传帖子的pid过去，在created钩子中请求后台获取数据，因此不用担心刷新页面时数据丢失
       this.$router.push({name:"postingDetail", params: {pid: posting.pid}})
-    }
+    },
+    // 操作收藏遮罩层
+    handleSaveMask(pid) {
+      this.saveMask.show = true
+      //将pid传到遮罩组件中
+      this.saveMask.pid = pid
+    },
   },
   watch: {
     '$store.state.user.userInfo': {
@@ -351,6 +376,14 @@ export default {
         }
       });
     })
+    //绑定隐藏收藏遮罩层事件，触发组件为SaveMask
+    this.$bus.on('changeShow', (val)=>{
+      this.saveMask.show = val
+    })
+    //绑定改变创建收藏夹遮罩层事件，触发组件为CreatePostingPackage
+    this.$bus.on('changeShowCreate', (val)=>{
+      this.saveMask.showCreate = val
+    })
   },
   beforeDestroy() {
     clearTimeout(window.thumbsUp)
@@ -359,6 +392,9 @@ export default {
     this.$message = null
     this.tmpStar = {}
     $(document).unbind('scroll');
+    //解绑隐藏收藏遮罩层事件，触发组件为SaveMask
+    this.$bus.off('changeShow')
+    this.$bus.off('changeShowCreate')
   },
 
 

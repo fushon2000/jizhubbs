@@ -16,6 +16,7 @@
         <!-- 搜索结果展示 -->
         <div class="search-main">
           <PostingItem class="posting-item" :posting="posting" :index="index" v-for="(posting, index) in postingList"
+                       :setKeywordColor="true"
                        :key="index"></PostingItem>
           <div class="loading-box" v-show="this.isLoad">
             <ul class="loading" ref="loading">
@@ -143,7 +144,7 @@ export default {
         // 滚动条+可视高度+150，距离文档高度差150的时候就要加载数据了
         if ((scrollTop + winHeight + 150 > docHeight) && this.isLoad === false && this.lastPage === false) {
           // 发送ajax请求数据  请求4条数据  填充到尾部
-          this.loadPosting(this.page++)
+          this.loadPosting()
         }
       });
     })

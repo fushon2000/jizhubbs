@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <Header/>
+    <Header v-if="hideHeader"/>
     <router-view></router-view>
-    <Footer v-show="showFooter"/>
+    <Footer v-if="showFooter"/>
   </div>
 </template>
 
@@ -17,22 +17,26 @@ export default {
     Footer
   },
   computed:{
-    showFooter(){
-      if (this.$route.path==="/publishPosting") {
+    // 哪些路由隐藏头部导航栏
+    hideHeader(){
+      if (this.$route.path==="/login") {
         return false
       } else return true
+    },
+    // 哪些路由显示页脚
+    showFooter(){
+      if (this.$route.path==="/login"
+          ||this.$route.path==="/home/recommend"
+          ||this.$route.path==="/home/latest") {
+        return true
+      } else return false
     }
   },
   mounted() {
     // this.$router.push("/home")
   },
   watch: {
-    // 监听token是因为异步请求后台获取token速度慢，此时cookie中没有token，数据还没有返回就被路由守卫拒绝了
-    // '$store.state.user.token': {
-    //   handler(newVal, oldVal) {
-    //     console.log(newVal,"oldVal : "+oldVal )
-    //   }
-    // }
+
   },
 }
 </script>
@@ -46,10 +50,30 @@ export default {
 body {
   height: 100%;
 }
+#app {
+  min-width: 1500px;
+}
 .el-popover {
   min-width: 50px!important;
 }
 .el-popover {
   padding: 0!important;
+}
+/*滚动条整体*/
+body::-webkit-scrollbar {
+  width: 8px;
+}
+/*滚动条中的滑块*/
+body::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(0,0,0,0.3);
+  background-clip: padding-box;
+}
+/*滚动条外层轨道*/
+body::-webkit-scrollbar-track {
+  border-radius: 0;
+}
+body::-webkit-scrollbar-thumb:hover{
+  background-color: rgba(0, 0, 0, 0.70);
 }
 </style>

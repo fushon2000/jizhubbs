@@ -13,10 +13,13 @@
               <img src="@/assets/img/吉珠校徽.jpg"/></div>
             <div class="author-info-content">
               <div class="author-name">
-                {{ posting.author }}
+                {{ posting.author}}
               </div>
-              <div class="author-signature">
-                作者个性签名，作者个性签名，作者个性签名，作者个性签名，作者个性签名，作者个性签名，作者个性签名，
+              <div class="author-signature" v-if="!posting.other.author">
+                该家伙很懒，展示还没有设置签名哦~
+              </div>
+              <div class="author-signature" v-if="posting.other.author">
+                {{ posting.other.author.signature != null ? posting.other.author.signature : '该家伙很懒，展示还没有设置签名哦~' }}
               </div>
             </div>
           </div>
@@ -70,7 +73,8 @@
         <!-- 评论数、默认排序、时间排序 -->
         <div class="comment-header">
           <div class="comment-number">
-            8条评论
+<!--            {{ commentNumber }}条评论-->
+            {{ posting.comment }}条评论
           </div>
           <div class="display-pattern">
             <el-radio-group v-model="commentDisplayPattern" size="mini" @input="commentDisplayPatternChange">
@@ -168,8 +172,9 @@
 <script>
 import $ from 'jquery'
 import ContentActions from '@/components/ContentActions'
-import {getCommentListByPid, likeComment, submitComment} from "@/api/comment";
+import {getCommentListByPid, getCommentListOrderByTime, likeComment, submitComment} from "@/api/comment";
 import {getPostingByPid} from "@/api/posting";
+import {getUserInfo} from "@/api/user";
 
 export default {
   name: "",
@@ -196,10 +201,28 @@ export default {
         author: '',
         content: '',
       },
-
+      // 评论展示模式
       commentDisplayPattern: '默认',
-      posting: {},
+      // 该帖子的所有信息
+      posting: {
+        // 此处不额外加tags会爆红，但是可以正常显示
+        other:{
+          tags:[]
+        }
+      },
+      // 该帖子的所有评论
       commentList: [],
+      // 作者信息
+      userInfo: {},
+    }
+  },
+  computed: {
+    commentNumber() {
+      let childrenNumber = 0
+      this.commentList.forEach(item => {
+        childrenNumber  += item.children.length
+      })
+      return this.commentList.length + childrenNumber
     }
   },
   methods: {
@@ -296,15 +319,24 @@ export default {
     },
     // 选择评论的显示模式 （默认，最近）
     commentDisplayPatternChange(pattern) {
-      console.log(pattern)
+      if (pattern === '默认') {
+        getCommentListByPid(this.$route.params.pid).then(res => {
+          this.commentList = res.data
+        })
+      }
+      if (pattern === '最近') {
+        getCommentListOrderByTime(this.$route.params.pid).then(res => {
+          this.commentList = res.data
+        })
+      }
     }
   },
-  computed: {},
   created() {
     // this.posting = JSON.parse(this.$route.query.posting)
     getPostingByPid(this.$route.params.pid).then(res => {
       this.posting = res.data
     })
+
     getCommentListByPid(this.$route.params.pid).then(res => {
       this.commentList = res.data
       // console.log(this.commentList)
@@ -457,6 +489,7 @@ li {
 .comment-publish {
   position: relative;
   width: 100%;
+  z-index: -1;
 }
 
 /*.comment-publish input {*/
@@ -510,6 +543,7 @@ li {
 
 .display-pattern {
   display: flex;
+  z-index: -1;
 }
 
 .comment-floor {

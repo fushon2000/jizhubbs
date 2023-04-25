@@ -25,25 +25,25 @@
         </li>
         <li :id="`down${index}`" @click="thumbDown(posting, index)"><i class="el-icon-caret-bottom"/></li>
         <li><i class="el-icon-chat-line-round" style="padding-right: 5px;"></i>{{ posting.comment }}评论</li>
-        <li><i class="el-icon-star-on" style="padding-right: 5px;"></i>{{ posting.save }}收藏</li>
+        <li @click="handleSaveMask(posting.pid)"><i class="el-icon-star-on" style="padding-right: 5px;"></i>{{ posting.save }}收藏</li>
       </ul>
     </div>
+    <!-- 帖子收藏遮罩层 -->
+    <SaveMask v-if="saveMask.show" :pid="saveMask.pid"></SaveMask>
+    <!-- 创建收藏夹遮罩层 -->
+    <CreatePostingPackage v-if="saveMask.showCreate"></CreatePostingPackage>
   </div>
 </template>
 
 <script>
 import $ from "jquery";
 import {increaseStar, decreaseStar} from "@/api/posting";
+import SaveMask from '@/components/SaveMask'
+import CreatePostingPackage from '@/components/SaveMask/CreatePostingPackage'
 
 export default {
   name: "ContentActions",
-  data() {
-    return {
-      // 帖子详情
-      // 用于保存原始点赞数
-      tmpStar: 0,
-    }
-  },
+  components: {SaveMask, CreatePostingPackage},
   props: {
     posting: {
       require: true
@@ -51,6 +51,21 @@ export default {
     index: {
       default: 0,
       type: Number
+    }
+  },
+  data() {
+    return {
+      // 帖子详情
+      // 用于保存原始点赞数
+      tmpStar: 0,
+      saveMask: {
+        // 是否显示收藏遮罩层
+        show: false,
+        // 将pid传到遮罩层组件中
+        pid: '',
+        // 是否显示创建收藏夹遮罩层
+        showCreate: false,
+      },
     }
   },
   methods: {
@@ -129,7 +144,6 @@ export default {
         })
       }
     },
-
     // 点踩效果
     thumbDown({pid,star},index) {
       if (!this.tmpStar.hasOwnProperty(`star${index}`)) {
@@ -177,13 +191,30 @@ export default {
       }, 1500)
       // console.log(this.postings[index].star)
     },
+    // 操作收藏遮罩层
+    handleSaveMask(pid) {
+      this.saveMask.show = !this.saveMask.show
+      //将pid传到遮罩组件中
+      this.saveMask.pid = pid
+    },
   },
   mounted() {
+    //绑定隐藏收藏遮罩层事件，触发组件为SaveMask
+    this.$bus.on('changeShow', (val)=>{
+      this.saveMask.show = val
+    })
+    //绑定改变创建收藏夹遮罩层事件，触发组件为CreatePostingPackage
+    this.$bus.on('changeShowCreate', (val)=>{
+      this.saveMask.showCreate = val
+    })
   },
   beforeDestroy() {
     clearTimeout(window.thumbsUp)
     clearTimeout(window.backOrigin)
     clearTimeout(window.showDot)
+    //解绑隐藏收藏遮罩层事件，触发组件为SaveMask
+    this.$bus.off('changeShow')
+    this.$bus.off('changeShowCreate')
   }
 }
 </script>

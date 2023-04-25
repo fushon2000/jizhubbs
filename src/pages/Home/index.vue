@@ -12,25 +12,6 @@
         </div>
         <!-- 搜索框 -->
         <div class="search">
-<!--          <div class="search-header">-->
-<!--            <el-carousel :interval="3000" height="160px" direction="vertical">-->
-<!--              <el-carousel-item v-for="(image,index) in searchBoxCarouselImages" :key="index">-->
-<!--                <img :src="image" height="100%" width="100%"/>-->
-<!--              </el-carousel-item>-->
-<!--            </el-carousel>-->
-<!--          </div>-->
-<!--          <div class="search-bottom">-->
-<!--            <div class="search-box">-->
-<!--              <label style="cursor: text" for="search" v-show="inPlaceholder"><i class="el-icon-search">&nbsp;&nbsp;请输入关键字进行搜索</i></label>-->
-<!--              <input type="text" id="search" @blur="showPlaceholder" @focus="hidePlaceholder" v-model="searchContent" @keydown.enter="search(searchContent)">-->
-<!--            </div>-->
-<!--            <ul>-->
-<!--              <li><a href="#">JAVA</a></li>-->
-<!--              <li><a href="#">技术</a></li>-->
-<!--              <li><a href="#">金融</a></li>-->
-<!--              <li><a href="#">工商</a></li>-->
-<!--            </ul>-->
-<!--          </div>-->
           <SearchBox style="width: 100%;  border-radius: 14px; overflow: hidden"></SearchBox>
         </div>
 
@@ -236,9 +217,9 @@ export default {
       console.log(data);
     },
     // 懒加载学院分类数据
-    loadData(node, resolve) {
+    async loadData(node, resolve) {
       if (node.level === 0) {
-        getDepartments().then((res) => {
+        await getDepartments().then((res) => {
           res.data.forEach(department => {
             this.departments.push({
               name: department.dictDesc,

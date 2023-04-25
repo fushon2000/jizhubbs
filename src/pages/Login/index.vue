@@ -7,7 +7,7 @@
           <!-- 切换登录类型 -->
           <div class="HomePageLogin-tabs">
             <input type="radio" id="mailLogin" name="login-tabs" checked="checked">
-            <label for="mailLogin" class="HomePageLogin-tab" id="mailLogin-label">学/工号登录</label>
+            <label for="mailLogin" class="HomePageLogin-tab " id="mailLogin-label">学/工号登录</label>
             <input type="radio" id="phoneLogin" name="login-tabs">
             <label for="phoneLogin" class="HomePageLogin-tab" id="phoneLogin-label">验证码登录</label>
           </div>
@@ -22,6 +22,7 @@
                 <input type="password" name="password" class="password" placeholder="密码" v-model="password">
               </div>
               <a href="#">忘记密码?</a>
+<!--              <a href="#" class="guest-login" @click="guestLogin"><font-awesome-icon :icon="['fas', 'door-open']" /> 游客登录</a>-->
               <button type="submit" class="login-button" @click.prevent="signInByUid(uid,password)">登录</button>
             </form>
           </div>
@@ -38,6 +39,7 @@
                        v-model="captcha">
                 <button class="captcha-button" @click.prevent="sendSignInCaptcha(phone)">获取验证码</button>
               </div>
+<!--              <a href="#" class="guest-login" @click="guestLogin"><font-awesome-icon :icon="['fas', 'door-open']" /> 游客登录</a>-->
               <button type="submit" class="login-button" @click.prevent="signInByPhone(phone,captcha)">登录</button>
             </form>
           </div>
@@ -57,8 +59,8 @@ export default {
   name: "Login",
   data() {
     return {
-      uid: '',
-      password: '',
+      uid: '13191127',
+      password: '13191127',
       signInType: '',
       phone: '',
       captcha: '',
@@ -68,7 +70,7 @@ export default {
     // uid + 密码登录
     signInByUid(uid, password) {
       this.$store.dispatch("user/signInByUid", {uid, password}).then((userInfo) => {
-        this.$router.push({name: "home",query: {department:userInfo.department,speciality:userInfo.speciality}})
+        this.$router.push({name: "home"})
       }).catch(err => {
         console.log(err)
       })
@@ -90,6 +92,10 @@ export default {
       } else {
         this.$message("请先输入手机号码！")
       }
+    },
+    // 游客登录
+    guestLogin() {
+
     }
   },
   watch: {
@@ -268,9 +274,14 @@ input[type="radio"] {
   width: 100%;
   margin-top: 20px;
   height: 36px;
+  cursor: pointer;
 }
 
 #mailLogin-label {
   font-weight: bolder;
+}
+
+.guest-login {
+  display: block;
 }
 </style>

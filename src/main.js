@@ -7,7 +7,8 @@ import store from "@/store";
 import {
     Image, Tabs, TabPane, Carousel, CarouselItem, Tree, Message, MessageBox,
     Upload, Dialog, Button, Input, Form, FormItem, Avatar, Popover, Table, TableColumn,
-    Switch, Select, Tooltip, RadioButton, RadioGroup
+    Switch, Select, Tooltip, RadioButton, RadioGroup, Option, Dropdown,
+    DropdownMenu, DropdownItem, Pagination, Radio, Row, Col, Card, Popconfirm
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 // 引入fontawesome
@@ -46,6 +47,16 @@ Vue.use(Select)
 Vue.use(Tooltip)
 Vue.use(RadioGroup)
 Vue.use(RadioButton)
+Vue.use(Option)
+Vue.use(Dropdown)
+Vue.use(DropdownItem)
+Vue.use(DropdownMenu)
+Vue.use(Pagination)
+Vue.use(Radio)
+Vue.use(Row)
+Vue.use(Col)
+Vue.use(Card)
+Vue.use(Popconfirm)
 Vue.prototype.$message = Message;
 Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$alert = MessageBox.alert;
@@ -68,7 +79,7 @@ import 'froala-editor/js/languages/zh_cn';
 import VueFroala from 'vue-froala-wysiwyg';
 Vue.use(VueFroala)
 
-Vue.config.productionTip = false
+
 
 new Vue({
     render: h => h(App),
