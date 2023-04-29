@@ -225,7 +225,7 @@ export default {
 }
 .repositories-custom-dropdown-button {
   background-color: #21262d;
-  color: #c9d1d9;
+  color: var(--homepage_font_color);
   border: 1px solid rgba(240,246,252,0.1);
   border-radius: 6px;
   padding: 8px 14px;

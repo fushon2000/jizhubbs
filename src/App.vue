@@ -76,4 +76,11 @@ body::-webkit-scrollbar-track {
 body::-webkit-scrollbar-thumb:hover{
   background-color: rgba(0, 0, 0, 0.70);
 }
+
+:root {
+  --homepage_bgc: rgb(13, 17, 23);
+  --homepage_nav_bgc: rgba(255,255,255,.1);
+  --homepage_font_color: #c9d1d9;
+  --homepage_post_color: #58a6ff;
+}
 </style>

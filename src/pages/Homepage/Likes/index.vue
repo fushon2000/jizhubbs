@@ -1,5 +1,6 @@
 <template>
   <div class="likes">
+    <!-- 收藏夹侧边栏 -->
     <div class="sidebar">
       <ul>
         <li class="folder-item" @click="showCreateFavorite">
@@ -8,7 +9,7 @@
         </li>
         <li class="folder-item" v-for="(item, index) in postingPackageList" :key="index">
           <i v-if="!item.isPrivate" class="el-icon-files"></i>
-          <svg v-if="item.isPrivate" t="1682317869931" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="17542" width="16" height="16"><path d="M170.666667 170.666667h194.56a42.666667 42.666667 0 0 1 40.533333 29.013333l23.04 69.973333A42.666667 42.666667 0 0 0 469.333333 298.666667h298.666667a42.666667 42.666667 0 0 1 42.666667 42.666666 42.666667 42.666667 0 0 0 85.333333 0 128 128 0 0 0-128-128h-267.946667l-13.653333-42.666666a128 128 0 0 0-121.173333-85.333334H170.666667a128 128 0 0 0-128 128v554.666667a128 128 0 0 0 128 128h256a42.666667 42.666667 0 0 0 0-85.333333H170.666667a42.666667 42.666667 0 0 1-42.666667-42.666667V213.333333a42.666667 42.666667 0 0 1 42.666667-42.666666z m725.333333 477.013333V597.333333a128 128 0 0 0-256 0v50.346667A128 128 0 0 0 554.666667 768v85.333333a128 128 0 0 0 128 128h170.666666a128 128 0 0 0 128-128v-85.333333a128 128 0 0 0-85.333333-120.32zM725.333333 597.333333a42.666667 42.666667 0 0 1 85.333334 0v42.666667h-85.333334z m170.666667 256a42.666667 42.666667 0 0 1-42.666667 42.666667h-170.666666a42.666667 42.666667 0 0 1-42.666667-42.666667v-85.333333a42.666667 42.666667 0 0 1 42.666667-42.666667h170.666666a42.666667 42.666667 0 0 1 42.666667 42.666667z" p-id="17543" fill="#c9d1d9"></path></svg>
+          <svg v-if="item.isPrivate" t="1682317869931" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="17542" width="16" height="16"><path d="M170.666667 170.666667h194.56a42.666667 42.666667 0 0 1 40.533333 29.013333l23.04 69.973333A42.666667 42.666667 0 0 0 469.333333 298.666667h298.666667a42.666667 42.666667 0 0 1 42.666667 42.666666 42.666667 42.666667 0 0 0 85.333333 0 128 128 0 0 0-128-128h-267.946667l-13.653333-42.666666a128 128 0 0 0-121.173333-85.333334H170.666667a128 128 0 0 0-128 128v554.666667a128 128 0 0 0 128 128h256a42.666667 42.666667 0 0 0 0-85.333333H170.666667a42.666667 42.666667 0 0 1-42.666667-42.666667V213.333333a42.666667 42.666667 0 0 1 42.666667-42.666666z m725.333333 477.013333V597.333333a128 128 0 0 0-256 0v50.346667A128 128 0 0 0 554.666667 768v85.333333a128 128 0 0 0 128 128h170.666666a128 128 0 0 0 128-128v-85.333333a128 128 0 0 0-85.333333-120.32zM725.333333 597.333333a42.666667 42.666667 0 0 1 85.333334 0v42.666667h-85.333334z m170.666667 256a42.666667 42.666667 0 0 1-42.666667 42.666667h-170.666666a42.666667 42.666667 0 0 1-42.666667-42.666667v-85.333333a42.666667 42.666667 0 0 1 42.666667-42.666667h170.666666a42.666667 42.666667 0 0 1 42.666667 42.666667z" p-id="17543" fill="var(--homepage_font_color)"></path></svg>
           <a href="javascript:void(0);" @click="selectPostingPackage(item)">{{ item.name }}</a>
           <span class="folder-item-number">{{ item.other.count }}</span>
         </li>
@@ -171,23 +172,24 @@ export default {
 <style scoped>
 a {
   text-decoration: none;
-  color: #c9d1d9;
+  color: var(--homepage_font_color);
 }
 i {
-  color: #c9d1d9;
+  color: var(--homepage_font_color);
 }
 li {
   list-style: none;
 }
 .likes {
   display: flex;
-  color: #c9d1d9;
+  color: var(--homepage_font_color);
 }
 .sidebar {
   min-height: 400px;
   max-height: 540px;
   overflow-y: auto;
   width: 210px;
+  border-right: 1px solid var(--homepage_font_color);
 }
 /*滚动条整体*/
 .sidebar::-webkit-scrollbar {
@@ -196,7 +198,7 @@ li {
 /*滚动条中的滑块*/
 .sidebar::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: #c9d1d9;
+  background: var(--homepage_font_color);
 }
 /*滚动条外层轨道*/
 .sidebar::-webkit-scrollbar-track {
@@ -205,7 +207,7 @@ li {
 }
 .folder-item {
   padding: 12px 18px;
-  color: #c9d1d9;
+  color: var(--homepage_font_color);
   display: flex;
   align-items: center;
 }
@@ -225,7 +227,7 @@ li {
   margin-left: 18px;
 }
 .detail {
-  border-bottom: 1px solid #c9d1d9;
+  border-bottom: 1px solid var(--homepage_font_color);
   padding: 12px 0;
 }
 .title {
@@ -245,6 +247,10 @@ li {
 }
 .operation > * {
   margin-right: 16px;
+}
+.content {
+  box-sizing: border-box;
+  margin: 0 3px;
 }
 .carousel-item {
   height: 500px;

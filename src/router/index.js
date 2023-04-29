@@ -148,7 +148,13 @@ const router = new VueRouter({
                     name: "likes",
                     path: "likes",
                     component: () => import("@/pages/Homepage/Likes"),
-                }
+                },
+                {
+                    // 我的关注
+                    name: "follow",
+                    path: "follow",
+                    component: () => import("@/pages/Homepage/Follow"),
+                },
             ]
         },
 

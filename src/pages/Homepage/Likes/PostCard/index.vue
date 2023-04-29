@@ -23,9 +23,8 @@
                 <td><span>取消收藏</span></td>
               </tr>
             </table>
-            <span slot="reference">···</span>
+            <span slot="reference" style="cursor: pointer;">···</span>
           </el-popover>
-
         </div>
       </div>
     </div>
@@ -119,13 +118,13 @@ export default {
 .operation-popover-table {
   width: 100%;
   border: none;
+  margin: 2px 0;
+  border-collapse: collapse;
 }
 .operation-popover-table tr {
   cursor: pointer;
 }
 .operation-popover-table tr:hover{
   background-color: rgba(0, 0, 0, .08);
-  /*box-shadow: 1px 1px 5px 3px rgba(0,0,0,.5) inset,-1px -1px 5px 3px rgba(0,0,0,.5) inset;*/
-
 }
 </style>

@@ -55,7 +55,6 @@ export default {
   created() {
     getPopularPostingListByUid(this.$store.state.user.userInfo.uid, 1).then(({data})=>{
       this.postingPage = data
-      console.log(this.postingPage.records)
     })
   }
 }
@@ -71,7 +70,7 @@ li {
   margin-left: 8px;
   font-weight: 400;
   font-size: 16px;
-  color: #c9d1d9;
+  color: var(--homepage_font_color);
 }
 
 .posting-box ul {
@@ -120,7 +119,7 @@ li {
   border-radius: 999px;
   font-size: 13px;
   /*color: #8b949e;*/
-  color: #c9d1d9;
+  color: var(--homepage_font_color);
   padding: 2px 6px;
   display: inline-block;
   height: 16px;
@@ -133,7 +132,7 @@ li {
   font-size: 12px;
   display: flex;
   justify-content: space-between;
-  color: #c9d1d9;
+  color: var(--homepage_font_color);
   overflow: hidden;
 }
 
@@ -146,6 +145,6 @@ li {
 
 .posting-editTime {
   font-size: 12px;
-  color: #c9d1d9;
+  color: var(--homepage_font_color);
 }
 </style>

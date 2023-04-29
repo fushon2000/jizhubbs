@@ -59,9 +59,11 @@
             <li id="stars" @click="selectedTag = 'stars'"><div><font-awesome-icon icon="fa-solid fa-thumbs-up" /><span>stars</span></div></li>
             <!-- 点赞 -->
             <li id="likes" @click="selectedTag = 'likes'"><div><font-awesome-icon icon="fa-solid fa-star" /><span>likes</span></div></li>
+            <!-- 关注 -->
+            <li id="follow" @click="selectedTag = 'follow'"><div><font-awesome-icon :icon="['fas', 'user-group']" /><span>follow</span></div></li>
           </ul>
         </div>
-        <router-view :key="$route.fullPath"></router-view>
+        <router-view :key="Date.now()"></router-view>
       </div>
     </div>
   </div>
@@ -87,8 +89,7 @@ export default {
     getUserInfo(token) {
       getUserInfo(token).then(({data}) => {
         this.userInfo = data
-        console.log(this.userInfo)
-      })
+        })
     }
   },
   watch: {
@@ -126,7 +127,7 @@ export default {
   width: 300px;
   height: 100%;
   position: relative;
-  color: #c9d1d9;
+  color: var(--homepage_font_color);
 }
 
 .avatar-box {
@@ -176,7 +177,7 @@ export default {
   width: 100%;
   margin-top: 16px;
   padding: 8px;
-  color: #c9d1d9;
+  color: var(--homepage_font_color);
   font-size: 14px;
   font-weight: 500;
   border: 1px solid #b2b2b2;
@@ -197,14 +198,14 @@ export default {
 .nav {
   border-bottom: 1px solid #b2b2b2;
 }
-.nav li{
+.nav li {
   box-sizing: border-box;
   list-style-type: none;
   display: inline-block;
   margin: 0 6px;
   padding: 8px 0;
   position: relative;
-  color: #c9d1d9;
+  color: var(--homepage_font_color);
   cursor: pointer;
 }
 .tag-isActive::after {
